@@ -6,14 +6,10 @@
 //
 
 const PRIVATE_config = {
-    server_type: "serverless",
+    // server_type: "serverless",
     dev: {
         port: 4897,
         lan_access: true,
-    },
-    env_secrets: {
-        // Configures env variables that are set in .env.local on startup
-        IRON_SECRET: { length: 256 },
     },
 };
 
