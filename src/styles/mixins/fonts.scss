@@ -1,0 +1,28 @@
+//
+//  REF: Variable Fonts guide:  https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_fonts/Variable_fonts_guide
+//
+
+@mixin font-variable-sans {
+    font-family: var(--font_Mulish);
+    font-weight: 400;
+    //
+    // // For variable fonts with more axes:
+    // font-stretch: 120%; // "wdth"
+    // font-variation-settings: "GRAD" -50;
+}
+
+@mixin font-sans {
+    @include font-variable-sans;
+}
+
+@mixin font-body {
+    @include font-variable-sans;
+}
+
+@mixin font-variable {
+    @include font-variable-sans;
+}
+
+// ...any other font definitions
+
+//

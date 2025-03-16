@@ -1,0 +1,25 @@
+//
+// @import "../common";
+//
+
+// MARK: Device "light mode" colors
+:root {
+    --foreground-rgb: 243, 242, 243;
+    --background-rgb: 8, 8, 9;
+    // ->
+    --foreground: rgba(var(--foreground-rgb), 100%);
+    --background: rgba(var(--background-rgb), 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        // NOTE: This app keeps the same colors despite light/dark mode, so we don't define new colors here
+        //
+        // --foreground-rgb: 242, 243, 244;
+        // --background-rgb: 8, 8, 9;
+    }
+
+    html {
+        color-scheme: dark;
+    }
+}

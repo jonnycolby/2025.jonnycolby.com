@@ -1,0 +1,16 @@
+
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+
+
+[alt_names]
+
+DNS.1       = localhost
+DNS.2       = *.localhost
+DNS.3       = local
+DNS.4       = 127.0.0.1
+DNS.5       = *.127.0.0.1
+DNS.6       = ::1

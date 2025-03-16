@@ -1,0 +1,50 @@
+@use "@/styles/common" as *;
+//
+//
+
+.UI {
+    z-index: 100;
+    position: fixed;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+
+    background-position: center center;
+    background-size: auto;
+    background-repeat: repeat;
+
+    background-color: #080809;
+
+    @include font_sans;
+}
+
+.renderer_2d_wrap {
+    z-index: 101;
+    position: fixed;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}
+
+.renderer_3d_wrap {
+    z-index: 102;
+    position: fixed;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}

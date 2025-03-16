@@ -1,0 +1,165 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode", // sets default for all languages
+
+    // VSCode
+    "explorer.compactFolders": false,
+
+    // Editor: format on save
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+
+    // Editor: tab size
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+
+    // Editor: comments
+    "editor.comments.ignoreEmptyLines": false,
+
+    // Stylelint
+    "stylelint.enable": true,
+    "stylelint.validate": ["css", "scss"],
+    "stylelint.packageManager": "yarn",
+
+    // ESLint
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+    "eslint.workingDirectories": [{ "mode": "auto" }],
+    "eslint.format.enable": true,
+
+    // Disable built-in linters for CSS in order to use Stylelint instead:
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
+
+    // Code highlights
+    "todohighlight.defaultStyle": {
+        "color": "rgba(0, 187, 255, 1.0)", // "#00bbff",
+        "backgroundColor": "rgba(0, 0, 0, 0.5)",
+        "border": "none",
+        "outline": "1.5px solid rgba(0, 187, 255, 0.72)",
+        //
+        // "overviewRulerColor": "#00dd88",
+        "cursor": "crosshair", // "progress",
+        "borderRadius": "3px",
+        "isWholeLine": false
+        //other styling properties goes here ...
+    },
+    "todohighlight.keywords": [
+        //
+        "REVIEW:",
+        "REVIEW",
+        //
+        {
+            "text": "TODO:",
+            "color": "rgba(255, 171, 0, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(255, 171, 0, 0.93)",
+            "backgroundColor": "rgba(0, 0, 0, 0.5)"
+            // ...any other styling properties
+        },
+        {
+            "text": "TODO",
+            "color": "rgba(255, 171, 0, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(255, 171, 0, 0.93)",
+            "backgroundColor": "rgba(0, 0, 0, 0.5)"
+        },
+        {
+            "text": "MARK:",
+            "color": "rgba(161, 128, 254, 1.0)",
+            "outlineColor": "rgba(161, 128, 254, 0.5)"
+        },
+        {
+            "text": "MARK",
+            "color": "rgba(161, 128, 254, 1.0)",
+            "outlineColor": "rgba(161, 128, 254, 0.5)"
+        },
+        //
+        {
+            "text": "WARN:",
+            "color": "rgba(221, 0, 1, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(243, 0, 1, 1.0)"
+        },
+        {
+            "text": "WARNING",
+            "color": "rgba(221, 0, 1, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(243, 0, 1, 1.0)"
+        },
+        //
+        {
+            "text": "NOTES:",
+            "color": "rgba(0, 187, 255, 1.0)", // "#00bbff",
+            "outlineColor": "rgba(0, 187, 255, 0.5)"
+        },
+        {
+            "text": "NOTES",
+            "color": "rgba(0, 187, 255, 1.0)", // "#00bbff",
+            "outlineColor": "rgba(0, 187, 255, 0.5)"
+        },
+        {
+            "text": "NOTE:",
+            "color": "rgba(0, 187, 255, 1.0)", // "#00bbff",
+            "outlineColor": "rgba(0, 187, 255, 0.5)"
+        },
+        {
+            "text": "NOTE",
+            "color": "rgba(0, 187, 255, 1.0)", // "#00bbff",
+            "outlineColor": "rgba(0, 187, 255, 0.5)"
+        },
+        //
+        {
+            "text": "DEBUG:",
+            "color": "rgba(254, 1, 242, 1.0)",
+            "outlineColor": "rgba(254, 1, 242, 0.5)"
+        },
+        {
+            "text": "DEBUG",
+            "color": "rgba(254, 1, 242, 1.0)",
+            "outlineColor": "rgba(254, 1, 242, 0.5)"
+        },
+        //
+        {
+            "text": "HACK:",
+            "color": "rgba(1, 243, 161, 1.0)",
+            "outlineColor": "rgba(1, 221, 128, 0.5)"
+        },
+        {
+            "text": "HACK",
+            "color": "rgba(1, 243, 161, 1.0)",
+            "outlineColor": "rgba(1, 221, 128, 0.5)"
+        },
+        //
+        {
+            "text": "TESTING:",
+            "color": "rgba(255, 171, 0, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(255, 171, 0, 0.32)"
+        },
+        {
+            "text": "TESTING",
+            "color": "rgba(255, 171, 0, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(255, 171, 0, 0.32)"
+        },
+        //
+        {
+            "text": "IMPORTANT:",
+            "color": "rgba(255, 171, 0, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(255, 171, 0, 0.32)"
+        },
+        {
+            "text": "IMPORTANT",
+            "color": "rgba(255, 171, 0, 1.0)", // "#ffab00",
+            "outlineColor": "rgba(255, 171, 0, 0.32)"
+        },
+        //
+        {
+            "text": "QUESTION",
+            "color": "rgba(254, 1, 242, 1.0)",
+            "outlineColor": "rgba(254, 1, 242, 0.5)"
+        },
+        {
+            "text": "QUESTION:",
+            "color": "rgba(254, 1, 242, 1.0)",
+            "outlineColor": "rgba(254, 1, 242, 0.5)"
+        }
+    ]
+}
