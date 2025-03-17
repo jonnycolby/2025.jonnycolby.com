@@ -46,7 +46,7 @@ class Graphics_three extends React.Component {
             quaternion: {
                 device: new THREE.Quaternion(),
                 device_inverse: new THREE.Quaternion(),
-                initial: null, // new THREE.Quaternion(),
+                initial: null, // Quaternion
             },
             light_mode: "auto", // "auto" || "cursor" || "device"
         };
@@ -109,9 +109,6 @@ class Graphics_three extends React.Component {
         const spade_px_values = await get_spade_pixels();
         // ->
         const spade_geometry = make_spade_geometry(spade_px_values);
-        // const spade_bbox = new THREE.Box3().setFromObject(spade_geometry); // NOTE: must set from an Object3D, like a mesh
-        // const spade_size = spade_bbox.getSize(new THREE.Vector3());
-        // console.log("spade_size", spade_size);
 
         //
         //
@@ -122,7 +119,6 @@ class Graphics_three extends React.Component {
         Z.vars.light_distance = Math.max(dom_bbox.width, dom_bbox.height) * LIGHT_DISTANCE_RATIO;
 
         MEM.scene = new THREE.Scene();
-        // MEM.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         MEM.camera = new THREE.OrthographicCamera(dom_bbox.width * -0.5, dom_bbox.width * 0.5, dom_bbox.height * 0.5, dom_bbox.height * -0.5, 0, 2000);
 
         MEM.camera.position.z = 1000;
@@ -141,47 +137,15 @@ class Graphics_three extends React.Component {
 
         //
 
-        // MEM.objects.cube_01 = {};
-        // const cube_01 = MEM.objects.cube_01;
-        // cube_01.geometry = new THREE.BoxGeometry(100, 100, 100);
-        // // cube_01.material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        // cube_01.material = new THREE.MeshPhongMaterial({ color: 0xffffff });
-        // cube_01.mesh = new THREE.Mesh(cube_01.geometry, cube_01.material);
-        // MEM.scene.add(cube_01.mesh);
-
-        //
-
         MEM.objects.scene_group = new THREE.Group();
         MEM.scene.add(MEM.objects.scene_group);
 
-        // MEM.objects.background_plane = {};
-        // const bg_plane = MEM.objects.background_plane;
-        // bg_plane.geometry = new THREE.PlaneGeometry(dom_bbox.width, dom_bbox.height);
-        // // Matte, near-black material:
-        // bg_plane.material = new THREE.MeshPhongMaterial({
-        //     color: 0xff0000, // 0x080809, // Near-black matte color
-        //     emissive: 0x141415, // Near-black matte color
-        //     roughness: 0.9, // High roughness for matte effect
-        //     metalness: 0.0, // Non-metallic
-        // });
-        // bg_plane.mesh = new THREE.Mesh(bg_plane.geometry, bg_plane.material);
-        // bg_plane.mesh.position.set(0, 0, -100);
-        // MEM.scene.add(bg_plane.mesh);
-
-        // // TESTING
-        // const demo_sphere = {};
-        // demo_sphere.geometry = new THREE.SphereGeometry(32);
-        // demo_sphere.material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        // demo_sphere.mesh = new THREE.Mesh(demo_sphere.geometry, demo_sphere.material);
-        // demo_sphere.mesh.position.set(0, 0, 100);
-        // // MEM.scene.add(demo_sphere.mesh);
-        // MEM.objects.scene_group.add(demo_sphere.mesh);
-
         //
-        // TESTING
+        // OPTIONAL: Orientation point
+        //  -> A sense of gravity.  This helps the user feel the direction of the spade's normal.  Without this, the spade can feel like its rotating the opposite way.
+        //  -> TODO: let's show this when we have a device orientation, and hide it when we're in light position mode
         const demo_point = {};
         demo_point.group = new THREE.Group();
-        // demo_point.mesh = demo_point.group;
         demo_point.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
         demo_point.geometries = {};
         demo_point.geometries.x_axis = new THREE.CylinderGeometry(1, 1, 24, 8); // radiusTop, radiusBottom, height, radialSegments
@@ -198,7 +162,6 @@ class Graphics_three extends React.Component {
         demo_point.group.add(demo_point.meshes.y_axis);
         demo_point.group.add(demo_point.meshes.z_axis);
         demo_point.group.position.set(0, 0, 100);
-        // MEM.scene.add(demo_point.group);
         MEM.objects.scene_group.add(demo_point.group);
         //
 
@@ -208,35 +171,16 @@ class Graphics_three extends React.Component {
             x: dom_bbox.width * -0.5 + Math.floor(dom_bbox.width * 0.5), //
             y: dom_bbox.height * 0.5 - Math.floor(dom_bbox.height * 0.5),
         };
-        console.log("window_center_offset:", window_center_offset);
 
-        // const spade_material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
         // Glossy material:
         const spade_material = new THREE.MeshPhongMaterial({
             color: 0x000000, // Black glossy color
-            // color: 0x080809, // Gloss
-            // color: 0x880000, // TESTING
             emissive: 0x080809,
-            // specular: 0xbbbbbb, // White specular highlights
-            specular: 0xffffff,
-            roughness: 0.5, // 0.05 // Low roughness for gloss
-            metalness: 0.5, // 1.0, // High metalness for reflectivity
+            specular: 0xffffff, // white highlights
+            roughness: 0.5, // 0.05 -> Low roughness for gloss
+            metalness: 0.5, // 1.0, -> High metalness for reflectivity
         });
-        // // Clear, glossy material:
-        // const spade_material = new THREE.MeshPhysicalMaterial({
-        //     color: 0xffffff,
-        //     transmission: 1.0,
-        //     opacity: 1.0,
-        //     metalness: 0.5,
-        //     roughness: 0.5,
-        //     ior: 1.5,
-        //     thickness: 0.01,
-        //     specularIntensity: 1.0,
-        //     specularColor: 0xffffff,
-        //     transparent: true,
-        //     // clearcoat: 1.0,
-        //     // cloarcoatRoughness: 0.0,
-        // });
+
         const shape_mesh = new THREE.Mesh(spade_geometry, spade_material);
 
         const shape_width = spade_px_values[0].length * PX_SIZE;
@@ -244,15 +188,9 @@ class Graphics_three extends React.Component {
         const shape_size_max = Math.max(shape_width, shape_height);
         Z.vars.shape_size_max = shape_size_max;
 
-        const window_size = { width: dom_bbox.width, height: dom_bbox.height };
-        const window_size_half = { width: Math.floor(window_size.width * 0.5), height: Math.floor(window_size.height * 0.5) };
-
-        console.log("window_size:", window_size);
-
         const offset_px = [
             Math.floor(shape_width * -0.5),
             Math.floor(shape_height * 0.5), // positive because .scene is naturally inverted
-            // Math.floor(shape_size_max),
         ];
 
         const offset_px_full = [
@@ -267,32 +205,14 @@ class Graphics_three extends React.Component {
             offset_px_full[1],
             0, // -1.0 * offset_px_full[2],
         );
-        // shape_mesh.rotation.x = Math.PI * -0.25;
-        // MEM.scene.add(shape_mesh);
         MEM.objects.scene_group.add(shape_mesh);
 
         //
+        // MARK: Lights
         //
 
-        MEM.lights.TEST_ambient = new THREE.AmbientLight(0xffffff, 0.5);
-        MEM.scene.add(MEM.lights.TEST_ambient);
-
-        // MEM.lights.TEST_point = new THREE.PointLight(
-        //     0xffffff, // color
-        //     0.5, // intensity
-        //     0, // distance
-        //     0.01, // decay -> should be 2 with a normal PerspectiveCamera for physically-accurate results // TODO: refine this value
-        // );
-        // MEM.lights.TEST_point.position.set(0, 0, 500);
-        // MEM.scene.add(MEM.lights.TEST_point);
-
         MEM.lights.ambient = new THREE.AmbientLight(0x080809, 1.0); // soft white light
-        // MEM.lights.ambient = new THREE.AmbientLight(0xffffff, 0.5); // soft white light
         MEM.scene.add(MEM.lights.ambient);
-
-        // MEM.lights.directional_light_01 = new THREE.DirectionalLight(0xffffff, 1);
-        // MEM.lights.directional_light_01.position.set(0, 1, 1);
-        // MEM.scene.add(MEM.lights.directional_light_01);
 
         // create a point light:
         MEM.lights.cursor = new THREE.PointLight(
@@ -301,20 +221,9 @@ class Graphics_three extends React.Component {
             0, // distance
             0.01, // decay -> should be 2 with a normal PerspectiveCamera for physically-accurate results // TODO: refine this value
         );
-        // MEM.lights.castShadow = true;
         Z.vars.light_pos = { x: 0, y: 0, z: Z.vars.light_distance };
         MEM.lights.cursor.position.set(Z.vars.light_pos.x, Z.vars.light_pos.y * -1.0, Z.vars.light_pos.z);
-        // MEM.lights.cursor.position.set(0, 0, Z.vars.shape_size_max * 1.0);
         MEM.scene.add(MEM.lights.cursor);
-
-        // MEM.lights.cursor = new THREE.DirectionalLight(
-        //     0xffffff, // color
-        //     0.5, // intensity
-        //     // 0, // distance
-        //     // 0.01, // decay -> should be 2 with a normal PerspectiveCamera for physically-accurate results // TODO: refine this value
-        // );
-        // MEM.lights.cursor.position.set(0, 0, Z.vars.light_distance);
-        // MEM.scene.add(MEM.lights.cursor);
 
         //
         //
@@ -323,10 +232,7 @@ class Graphics_three extends React.Component {
             Z.mem.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
             document.body.appendChild(Z.mem.stats.dom);
         }
-        //
-        //
         MEM.renderer.setAnimationLoop(Z.animate);
-        //
         return true;
     };
 
@@ -336,12 +242,6 @@ class Graphics_three extends React.Component {
         if (Z.mem.stats) Z.mem.stats.begin();
         //
         if (ENABLE_ORBIT_CONTROLS) MEM.orbit_controls.update();
-        //
-        // MEM.lights.cursor.position.set(
-        //     Z.vars.cursor_pos.x, //
-        //     Z.vars.cursor_pos.y * -1.0,
-        //     Z.vars.light_distance,
-        // );
         //
         if (Z.vars.light_mode === "auto") {
             var light_angle = (performance.now() * 0.001 * Math.PI * 2.0) / 3.14; // 3.14 seconds for a full rotation
@@ -364,9 +264,6 @@ class Graphics_three extends React.Component {
             );
         }
         //
-        // MEM.objects.cube_01.mesh.rotation.x += 0.01;
-        // MEM.objects.cube_01.mesh.rotation.y += 0.01;
-        //
         Z.mem.renderer.render(MEM.scene, MEM.camera);
         if (Z.mem.stats) Z.mem.stats.end();
     };
@@ -377,7 +274,7 @@ class Graphics_three extends React.Component {
         const Z = this;
         Z.vars.dom_bbox = Z.dom.Renderer.getBoundingClientRect();
         const dom_bbox = Z.vars.dom_bbox;
-        // Z.vars.light_distance = Math.max(dom_bbox.width, dom_bbox.height) * LIGHT_DISTANCE_RATIO;
+        // Z.vars.light_distance = Math.max(dom_bbox.width, dom_bbox.height) * LIGHT_DISTANCE_RATIO; // TODO: fix light_distance functionality
         //
         const x = Z.vars.light_pos.x;
         const y = Z.vars.light_pos.y;
@@ -427,7 +324,6 @@ class Graphics_three extends React.Component {
 
     request_device_orientation = () => {
         const Z = this;
-        // window.addEventListener("deviceorientation", Z.on_device_orientation, true);
         if (typeof DeviceOrientationEvent.requestPermission === "function") {
             // iOS 13+ and other browsers that require permission
             DeviceOrientationEvent.requestPermission()
@@ -553,12 +449,6 @@ const rotate_square_verts = (verts, angles) => {
         [v3[0] - origin[0], v3[1] - origin[1], v3[2] - origin[2]],
         [v4[0] - origin[0], v4[1] - origin[1], v4[2] - origin[2]],
     ];
-    // var shifted_verts = [
-    //     [v1[0] - PX_SIZE * 0.5 - x, v1[1] - PX_SIZE * 0.5, v1[2]],
-    //     [v2[0] - PX_SIZE * 0.5 - x, v2[1] - PX_SIZE * 0.5, v2[2]],
-    //     [v3[0] - PX_SIZE * 0.5 - x, v3[1] - PX_SIZE * 0.5, v3[2]],
-    //     [v4[0] - PX_SIZE * 0.5 - x, v4[1] - PX_SIZE * 0.5, v4[2]],
-    // ];
 
     const rotated_verts = [];
 
@@ -576,7 +466,6 @@ const rotate_square_verts = (verts, angles) => {
         const y_extended = y;
         const z_entended = (z_new / y_new) * y_extended;
         // ->
-        // rotated_verts.push([x_new, y_new, z_new]);
         rotated_verts.push([x_extended, y_extended, z_entended]);
     });
 
@@ -595,25 +484,8 @@ const rotate_square_verts = (verts, angles) => {
         const y_extended = y;
         const z_entended = (z_new / x_new) * x_extended;
         // ->
-        // rotated_verts_2.push([x_new, y_new, z_new]);
         rotated_verts_2.push([x_extended, y_extended, z_entended]);
     });
-
-    // // // MARK: extend each vert so that x and y remain the same as they were, z is adjusted to make the square a parallelogram
-    // const extended_verts = [];
-    // rotated_verts_2.forEach((vert, vert_index) => {
-    //     const x = vert[0];
-    //     const y = vert[1];
-    //     const z = vert[2];
-    //     // ->
-    //     const x_new = shifted_verts[vert_index][0];
-    //     const y_new = shifted_verts[vert_index][1];
-    //     //
-    //     y_axis_slope =
-    //     const z_new =
-    //     // ->
-    //     extended_verts.push([x_new, y_new, z_new]);
-    // });
 
     const unshifted_verts = rotated_verts_2.map((vert) => {
         return [vert[0] + origin[0], vert[1] + origin[1], vert[2] + origin[2]];
@@ -632,7 +504,7 @@ const make_spade_geometry = (px_values) => {
     const spade_geometry = new THREE.BufferGeometry();
 
     const spade_verts = []; // -> [ [x, y, z], ... ]
-    const spade_indices = []; // -> [ [v1, v2, v3], ... ]0=
+    const spade_indices = []; // -> [ [v1, v2, v3], ... ]
 
     const add_triangle = (points) => {
         var existing_point, existing_point_index;
@@ -687,19 +559,6 @@ const make_spade_geometry = (px_values) => {
                 const v2 = [x + PX_SIZE, y + PX_SIZE, z];
                 const v3 = [x, y + PX_SIZE, z];
                 //
-                // // TESTING:
-                // // if LEFT edge, max the square half of the PX_SIZE
-                // if (px_y > 0 && px_values[px_y][px_x - 1] < 0.5) {
-                //     v0[0] += PX_SIZE * 0.25;
-                //     v0[1] += PX_SIZE * 0.25;
-                //     v1[0] -= PX_SIZE * 0.25;
-                //     v1[1] += PX_SIZE * 0.25;
-                //     v2[0] -= PX_SIZE * 0.25;
-                //     v2[1] -= PX_SIZE * 0.25;
-                //     v3[0] += PX_SIZE * 0.25;
-                //     v3[1] -= PX_SIZE * 0.25;
-                // }
-                //
                 // ->
                 const random_rotation = {
                     x: (Math.random() * 2 - 1) * ROTATE_MAX_ANGLE,
@@ -713,135 +572,8 @@ const make_spade_geometry = (px_values) => {
         }
     }
 
-    //
-    //  MARK: 3D
-    //
-    //     // ->
-    //     // MARK: 3D volume: back faces
-    //
-    //     const back_squares = [];
-    //     for (var px_y = 0; px_y < px_values.length; px_y++) {
-    //         back_squares.push([]);
-    //         for (var px_x = 0; px_x < px_values[px_y].length; px_x++) {
-    //             back_squares[px_y].push(null);
-    //             const px_val = px_values[px_y][px_x];
-    //             if (px_val >= 0.5) {
-    //                 const x = px_x * PX_SIZE;
-    //                 const y = px_y * PX_SIZE * -1.0; // y-axis is inverted
-    //                 const z = SHAPE_THICKNESS_px * -0.5;
-    //                 // ->
-    //                 // MARK: build square from [0, 0, 0]
-    //                 const v0 = [x, y, z];
-    //                 const v1 = [x + PX_SIZE, y, z];
-    //                 const v2 = [x + PX_SIZE, y + PX_SIZE, z];
-    //                 const v3 = [x, y + PX_SIZE, z];
-    //                 // ->
-    //                 const random_rotation = {
-    //                     x: (Math.random() * 2 - 1) * ROTATE_MAX_ANGLE,
-    //                     y: (Math.random() * 2 - 1) * ROTATE_MAX_ANGLE,
-    //                 };
-    //                 const rotated_square = rotate_square_verts([v0, v1, v2, v3], random_rotation);
-    //                 const rotated_square_flipped = [rotated_square[3], rotated_square[2], rotated_square[1], rotated_square[0]];
-    //                 back_squares[px_y][px_x] = [...rotated_square_flipped];
-    //                 // ->
-    //                 // add_square([v0, v1, v2, v3]);
-    //                 add_square([...rotated_square_flipped]);
-    //             }
-    //         }
-    //     }
-    //
-    //     // ->
-    //     // MARK: 3D volume: edges
-    //
-    //     for (var px_y = 0; px_y < px_values.length; px_y++) {
-    //         for (var px_x = 0; px_x < px_values[px_y].length; px_x++) {
-    //             const px_val = px_values[px_y][px_x];
-    //             if (px_val >= 0.5) {
-    //                 const square_edges = [];
-    //                 if (px_y > 0 && px_values[px_y + 1][px_x] < 0.5) square_edges.push("bottom");
-    //                 if (px_y > 0 && px_values[px_y - 1][px_x] < 0.5) square_edges.push("top");
-    //                 if (px_y > 0 && px_values[px_y][px_x - 1] < 0.5) square_edges.push("left");
-    //                 if (px_y > 0 && px_values[px_y][px_x + 1] < 0.5) square_edges.push("right");
-    //                 //
-    //                 // MARK: BOTTOM edge
-    //                 if (square_edges.includes("bottom")) {
-    //                     const front_square = front_squares[px_y][px_x];
-    //                     const back_square = back_squares[px_y][px_x];
-    //                     //
-    //                     // // NOTE: this works to manually place the edge rectangle, but we need to get these vertices from the existing shapes' vertices in order to connect the tilted verts
-    //                     // const x = px_x * PX_SIZE;
-    //                     // const y = px_y * PX_SIZE * -1.0; // y-axis is inverted
-    //                     // const z = SHAPE_THICKNESS_px * 0.5;
-    //                     // // ->
-    //                     // const v0 = [x, y, z - SHAPE_THICKNESS_px];
-    //                     // const v1 = [x + PX_SIZE, y, z - SHAPE_THICKNESS_px];
-    //                     // const v2 = [x + PX_SIZE, y, z];
-    //                     // const v3 = [x, y, z];
-    //                     //
-    //                     const v0 = back_square[3];
-    //                     const v1 = back_square[2];
-    //                     const v2 = front_square[1];
-    //                     const v3 = front_square[0];
-    //                     //
-    //                     add_square([v0, v1, v2, v3]);
-    //                 }
-    //                 //
-    //                 // MARK: TOP edge
-    //                 if (square_edges.includes("top")) {
-    //                     const front_square = front_squares[px_y][px_x];
-    //                     const back_square = back_squares[px_y][px_x];
-    //                     const v0 = back_square[1];
-    //                     const v1 = back_square[0];
-    //                     const v2 = front_square[3];
-    //                     const v3 = front_square[2];
-    //                     add_square([v0, v1, v2, v3]);
-    //                 }
-    //                 //
-    //                 // MARK: LEFT edge
-    //                 if (square_edges.includes("left")) {
-    //                     const front_square = front_squares[px_y][px_x];
-    //                     const back_square = back_squares[px_y][px_x];
-    //                     const v0 = front_square[3];
-    //                     const v1 = back_square[0];
-    //                     const v2 = back_square[3];
-    //                     const v3 = front_square[0];
-    //                     add_square([v0, v1, v2, v3]);
-    //                 }
-    //                 //
-    //                 // MARK: RIGHT edge
-    //                 if (square_edges.includes("right")) {
-    //                     const front_square = front_squares[px_y][px_x];
-    //                     const back_square = back_squares[px_y][px_x];
-    //                     const v0 = front_square[1];
-    //                     const v1 = back_square[2];
-    //                     const v2 = back_square[1];
-    //                     const v3 = front_square[2];
-    //                     add_square([v0, v1, v2, v3]);
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    // ->
-
-    // console.log("spade_verts:", spade_verts);
-
     const spade_verts_flat = flatten_array(spade_verts);
     const spade_indices_flat = flatten_array(spade_indices);
-
-    //     const spade_verts_flat = [];
-    //     for (var sv_i = 0; sv_i < spade_verts.length; sv_i++) {
-    //         spade_verts_flat.push(spade_verts[sv_i][0]);
-    //         spade_verts_flat.push(spade_verts[sv_i][1]);
-    //         spade_verts_flat.push(spade_verts[sv_i][2]);
-    //     }
-    //
-    //     const spade_indices_flat = [];
-    //     for (var si_i = 0; si_i < spade_indices.length; si_i++) {
-    //         spade_indices_flat.push(spade_indices[si_i][0]);
-    //         spade_indices_flat.push(spade_indices[si_i][1]);
-    //         spade_indices_flat.push(spade_indices[si_i][2]);
-    //     }
 
     // ->
 
