@@ -1,11 +1,12 @@
 import React from "react";
-// import Stats from "stats.js";
+import Stats from "stats.js";
 //
-import get_image_pixels from "@/methods/get_image_pixels";
+import get_corner_pixels from "@/methods/get_pixels/corner";
 //
 import styles from "./styles.module.scss";
 //
 const IS_DEV = process.env.NODE_ENV === "development";
+//
 //
 
 var PX_SIZE = 2; // must be a whole number
@@ -16,7 +17,6 @@ class Graphics extends React.Component {
         const Z = this;
         Z.parent = props.parent;
         Z.parent.children.Graphics_p5 = Z;
-        Z.core = props.core; // !!
 
         Z.static = {
             enable_stats: false,
@@ -123,12 +123,10 @@ class Graphics extends React.Component {
 
     componentDidMount() {
         const Z = this;
-        // window.addEventListener("pointerdown", Z.on_pointer_down, { capture: true, passive: true, once: false });
         Z.init();
     }
     componentWillUnmount() {
         const Z = this;
-        // window.removeEventListener("pointerdown", Z.on_pointer_down);
     }
 
     init = async () => {
@@ -137,9 +135,6 @@ class Graphics extends React.Component {
         //
         Z.lib.p5 = require("p5");
         //
-
-        // Z.mem.px.spade = await get_spade_pixels();
-        // // console.log("Z.mem.px.spade:", Z.mem.px.spade);
 
         Z.mem.px.corner = await get_corner_pixels();
 
@@ -167,40 +162,6 @@ class Graphics extends React.Component {
             p5.createCanvas(Z.cache.graphics.bbox.width, Z.cache.graphics.bbox.height);
             // p5.pixelDensity(1);
             // p5.frameRate(60);
-            //
-            // p5.background(255, 0, 0);
-            //
-
-            const canvas_size = {
-                width: Math.ceil(p5.width / PX_SIZE),
-                height: Math.ceil(p5.height / PX_SIZE),
-            };
-
-            // Z.vars.background_noise = p5.createGraphics(canvas_size.width, canvas_size.height);
-            // const BGN = Z.vars.background_noise;
-            // BGN.pixelDensity(1);
-            // // BGN.background(255, 0, 0);
-            // BGN.push();
-            // BGN.noStroke();
-            // for (var x = 0; x < BGN.width; x++) {
-            //     for (var y = 0; y < BGN.height; y++) {
-            //         var noise_val = p5.noise(x * Math.random(), y * Math.random());
-            //         noise_val = Math.pow(noise_val, 5);
-            //         // const px_val = noise_val >= 0.5 ? 255 : 0;
-            //         const px_val = Math.floor(noise_val * 8);
-            //         BGN.fill(
-            //             Math.floor(noise_val * 128) + 4, //
-            //             Math.floor(noise_val * 128) + 4,
-            //             Math.floor(noise_val * 128) + 5,
-            //         );
-            //         BGN.rect(x, y, 1, 1);
-            //     }
-            // }
-            // BGN.pop();
-
-            //
-            // ...
-            //
         };
 
         p5.windowResized = () => {
@@ -393,139 +354,9 @@ class Graphics extends React.Component {
 
 //
 //
-//
 
+//
+//
 export default Graphics;
-
-//
-
-//
-
-/* accepts parameters
- * h  Object = {h:x, s:y, v:z}
- * OR
- * h, s, v
- */
-function hsv_to_rgb(h, s, v) {
-    var r, g, b, i, f, p, q, t;
-    if (arguments.length === 1) {
-        (s = h.s), (v = h.v), (h = h.h);
-    }
-    i = Math.floor(h * 6);
-    f = h * 6 - i;
-    p = v * (1 - s);
-    q = v * (1 - f * s);
-    t = v * (1 - (1 - f) * s);
-    switch (i % 6) {
-        case 0:
-            (r = v), (g = t), (b = p);
-            break;
-        case 1:
-            (r = q), (g = v), (b = p);
-            break;
-        case 2:
-            (r = p), (g = v), (b = t);
-            break;
-        case 3:
-            (r = p), (g = q), (b = v);
-            break;
-        case 4:
-            (r = t), (g = p), (b = v);
-            break;
-        case 5:
-            (r = v), (g = p), (b = q);
-            break;
-    }
-    return {
-        r: Math.round(r * 255),
-        g: Math.round(g * 255),
-        b: Math.round(b * 255),
-    };
-}
-
-/* accepts parameters
- * r  Object = {r:x, g:y, b:z}
- * OR
- * r, g, b
- */
-function rgb_to_hsv(r, g, b) {
-    if (arguments.length === 1) {
-        (g = r.g), (b = r.b), (r = r.r);
-    }
-    var max = Math.max(r, g, b),
-        min = Math.min(r, g, b),
-        d = max - min,
-        h,
-        s = max === 0 ? 0 : d / max,
-        v = max / 255;
-
-    switch (max) {
-        case min:
-            h = 0;
-            break;
-        case r:
-            h = g - b + d * (g < b ? 6 : 0);
-            h /= 6 * d;
-            break;
-        case g:
-            h = b - r + d * 2;
-            h /= 6 * d;
-            break;
-        case b:
-            h = r - g + d * 4;
-            h /= 6 * d;
-            break;
-    }
-
-    return {
-        h: h,
-        s: s,
-        v: v,
-    };
-}
-
-//
-//
-
-const get_spade_pixels = async () => {
-    const img_px = await get_image_pixels("/img/pixel-spade-01--transparent.png");
-
-    var one_count = 0;
-
-    const xy = [];
-    for (var row_i = 0; row_i < img_px.length; row_i++) {
-        const row = img_px[row_i];
-        if (xy.length < row_i + 1) xy.push([]);
-        for (var col_i = 0; col_i < row.length; col_i++) {
-            const px = row[col_i];
-            const val = px[3] >= 0.5 ? 1 : 0;
-            xy[row_i].push(val);
-            if (val === 1) one_count++;
-        }
-    }
-
-    return xy;
-};
-
-const get_corner_pixels = async () => {
-    const img_px = await get_image_pixels("/img/card-corner-01--transparent.png");
-
-    var one_count = 0;
-
-    const xy = [];
-    for (var row_i = 0; row_i < img_px.length; row_i++) {
-        const row = img_px[row_i];
-        if (xy.length < row_i + 1) xy.push([]);
-        for (var col_i = 0; col_i < row.length; col_i++) {
-            const px = row[col_i];
-            const val = px[3] >= 0.5 ? 1 : 0;
-            xy[row_i].push(val);
-            if (val === 1) one_count++;
-        }
-    }
-
-    return xy;
-};
-
 //
 //

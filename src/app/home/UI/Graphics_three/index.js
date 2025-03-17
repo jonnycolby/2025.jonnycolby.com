@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "stats.js";
 //
-import get_image_pixels from "@/methods/get_image_pixels";
+import get_spade_pixels from "@/methods/get_pixels/spade";
 //
 import styles from "./styles.module.scss";
 //
@@ -106,7 +106,7 @@ class Graphics_three extends React.Component {
 
         //
 
-        const spade_px_values = await get_spade_pixel_values();
+        const spade_px_values = await get_spade_pixels();
         // ->
         const spade_geometry = make_spade_geometry(spade_px_values);
         // const spade_bbox = new THREE.Box3().setFromObject(spade_geometry); // NOTE: must set from an Object3D, like a mesh
@@ -533,35 +533,6 @@ const deg_to_rad = (deg) => {
 };
 
 //
-//
-
-const get_spade_pixel_values = async () => {
-    const img_px = await get_image_pixels("/img/pixel-spade-01--transparent.png");
-    // console.log("img_px:", img_px);
-
-    // var one_count = 0;
-
-    const xy = [];
-    for (var row_i = 0; row_i < img_px.length; row_i++) {
-        const row = img_px[row_i];
-        if (xy.length < row_i + 1) xy.push([]);
-        for (var col_i = 0; col_i < row.length; col_i++) {
-            const px = row[col_i];
-            const val = px[3] >= 0.5 ? 1 : 0;
-            xy[row_i].push(val);
-            // if (val === 1) one_count++;
-        }
-    }
-
-    // console.log("xy:", xy);
-    // console.log("one_count:", one_count);
-    // console.log("one_pct:", one_count / (img_px.length * img_px[0].length));
-
-    // ->
-    return xy;
-};
-
-//
 
 // NOTE: the pixels are currently not centered around origin
 const rotate_square_verts = (verts, angles) => {
@@ -655,7 +626,7 @@ const rotate_square_verts = (verts, angles) => {
 //
 
 const make_spade_geometry = (px_values) => {
-    if (!px_values) px_values = get_spade_pixel_values(); // rows of columns of (0 || 1)
+    if (!px_values) px_values = get_spade_pixels(); // rows of columns of (0 || 1)
     //
 
     const spade_geometry = new THREE.BufferGeometry();
