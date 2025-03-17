@@ -354,12 +354,8 @@ class Graphics_three extends React.Component {
         const MEM = Z.mem;
         const VARS = Z.vars;
         //
-        // // NOTE: this works, but the plane is always parallel to the floor
-        // Z.mem.scene.rotation.x = deg_to_rad(e.beta * -1.0);
-        // Z.mem.scene.rotation.y = deg_to_rad(e.gamma * -1.0);
-        // Z.mem.scene.rotation.z = deg_to_rad(e.alpha * -1.0);
-        //
-        //
+        //  IMPORTANT: We use Quaternion instead of Euler angles to avoid gimbal lock
+        //   -> https://en.wikipedia.org/wiki/Gimbal_lock
 
         const { alpha, beta, gamma } = e; // Rotation around z, x, and y axes in degrees
 
@@ -389,26 +385,6 @@ class Graphics_three extends React.Component {
         // Apply device orientation to the scene relative to the initial orientation
         const relativeQuaternion = VARS.quaternion.device.clone().multiply(VARS.quaternion.initial.clone().invert());
         MEM.objects.scene_group.quaternion.copy(relativeQuaternion);
-
-        // ...
-
-        // var beta = e.beta;
-        // var gamma = e.gamma;
-        // var alpha = e.alpha;
-        // if (screen.orientation === 180) {
-        //     // Device upside down
-        //     beta = -beta;
-        //     gamma = -gamma;
-        // }
-        // //
-        // if (Z.vars.orientation_offset_x === undefined) {
-        //     Z.vars.orientation_offset_x = e.beta;
-        // }
-        // //
-        // // MEM.objects.scene_group.rotation.x = deg_to_rad(e.beta * -0.5 + Z.vars.orientation_offset_x);
-        // MEM.objects.scene_group.rotation.x = deg_to_rad(e.beta * -1.0);
-        // MEM.objects.scene_group.rotation.y = deg_to_rad(e.gamma * -1.0);
-        // MEM.objects.scene_group.rotation.z = deg_to_rad(e.alpha * -1.0);
     };
 
     //
