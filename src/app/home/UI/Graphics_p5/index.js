@@ -1,5 +1,5 @@
 import React from "react";
-import Stats from "stats.js";
+// import Stats from "stats.js";
 //
 import get_image_pixels from "@/methods/get_image_pixels";
 //
@@ -19,7 +19,7 @@ class Graphics extends React.Component {
         Z.core = props.core; // !!
 
         Z.static = {
-            enable_stats: IS_DEV ? true : false,
+            enable_stats: false,
         };
 
         Z.state = {

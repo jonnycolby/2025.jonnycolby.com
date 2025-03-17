@@ -3,10 +3,13 @@
 import React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import Stats from "stats.js";
 //
 import get_image_pixels from "@/methods/get_image_pixels";
 //
 import styles from "./styles.module.scss";
+//
+const IS_DEV = process.env.NODE_ENV === "development";
 //
 //
 
@@ -53,6 +56,7 @@ class Graphics_three extends React.Component {
         };
 
         Z.mem = {
+            stats: null,
             renderer: null,
             scene: null,
             camera: null,
@@ -314,6 +318,13 @@ class Graphics_three extends React.Component {
 
         //
         //
+        if (IS_DEV) {
+            Z.mem.stats = new Stats();
+            Z.mem.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+            document.body.appendChild(Z.mem.stats.dom);
+        }
+        //
+        //
         MEM.renderer.setAnimationLoop(Z.animate);
         //
         return true;
@@ -322,6 +333,7 @@ class Graphics_three extends React.Component {
     animate = () => {
         const Z = this;
         const MEM = Z.mem;
+        if (Z.mem.stats) Z.mem.stats.begin();
         //
         if (ENABLE_ORBIT_CONTROLS) MEM.orbit_controls.update();
         //
@@ -356,6 +368,7 @@ class Graphics_three extends React.Component {
         // MEM.objects.cube_01.mesh.rotation.y += 0.01;
         //
         Z.mem.renderer.render(MEM.scene, MEM.camera);
+        if (Z.mem.stats) Z.mem.stats.end();
     };
 
     //
