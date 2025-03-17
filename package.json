@@ -19,16 +19,6 @@
         "format": "prettier --write ."
     },
     "dependencies": {
-        "@fortawesome/fontawesome-pro": "latest",
-        "@fortawesome/fontawesome-svg-core": "latest",
-        "@fortawesome/free-brands-svg-icons": "latest",
-        "@fortawesome/free-regular-svg-icons": "latest",
-        "@fortawesome/free-solid-svg-icons": "latest",
-        "@fortawesome/pro-duotone-svg-icons": "latest",
-        "@fortawesome/pro-light-svg-icons": "latest",
-        "@fortawesome/pro-regular-svg-icons": "latest",
-        "@fortawesome/pro-solid-svg-icons": "latest",
-        "@fortawesome/react-fontawesome": "latest",
         "@hapi/iron": "^7.0.1",
         "axios": "^1.7.9",
         "cookies": "^0.9.1",
