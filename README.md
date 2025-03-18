@@ -18,7 +18,7 @@ We then place a PointLight in the scene, placed at either the camera's position 
 
 That reacts to a custom material in the space of the spade, giving the glitter effect.
 
-~~
+---
 
 This has been optimized.
 
