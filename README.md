@@ -2,6 +2,18 @@
 
 This is the code for the cool, interactive, pixelated, sparkling spade on [jonnycolby.com](https://2025.jonnycolby.com).
 
+<img width="1486" alt="Screenshot 2025-03-17 at 10 47 17 PM" src="https://github.com/user-attachments/assets/67fe850b-1d49-4120-844d-334177fcd4b9" />
+
+## This is cool because
+
+<img width="888" alt="Screenshot 2025-03-17 at 10 44 14 PM" src="https://github.com/user-attachments/assets/2f9c1086-e7a7-4230-a913-3180b8a70c53" />
+
+Every unique user gets a randomized 3D model on the fly.
+
+On page load, we take a very small image full of pixels and draw each pixel to the scene, mapping the vertex of each corner of the pixel to 3D space.
+
+Then, we rotate each pixels' x and y axes.  When you do that, you get gaps between "pixels".  So we proceed to extend the pixels vertices along its plane's orientation in order to build a seamless texture when looking from the front with an orthographic camera.
+
 <br />
 
 # Setting up the project
