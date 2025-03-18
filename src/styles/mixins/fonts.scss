@@ -11,6 +11,11 @@
     // font-variation-settings: "GRAD" -50;
 }
 
+@mixin font-fancy {
+    font-family: var(--font_Anybody);
+    font-weight: 400;
+}
+
 @mixin font-sans {
     @include font-variable-sans;
 }

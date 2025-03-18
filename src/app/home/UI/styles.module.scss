@@ -48,3 +48,54 @@
     top: 0px;
     left: 0px;
 }
+
+.floaters {
+    display: flex;
+    flex-flow: center nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 0;
+    height: 0;
+}
+
+.floater {
+    z-index: 200; // default -> override for specific elements if needed
+    position: absolute;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+}
+
+.floater_bottom_left {
+    bottom: 22px;
+    left: 22px;
+}
+
+.view_code_button {
+    @include font-fancy;
+    font-weight: 567;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: pre;
+}
+
+.desktop_only {
+    display: none;
+}
+.mobile_only {
+    display: unset;
+}
+
+//
+
+@media (width >= 768px) {
+    .desktop_only {
+        display: unset;
+    }
+    .mobile_only {
+        display: none;
+    }
+}

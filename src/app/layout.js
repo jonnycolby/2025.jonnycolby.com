@@ -1,6 +1,6 @@
 //
 import Script from "next/script";
-import { Mulish } from "next/font/google";
+import { Mulish, Anybody } from "next/font/google";
 //
 import CONFIG_public from "../../config/public";
 //
@@ -14,6 +14,14 @@ const font__Mulish = Mulish({
     subsets: ["latin"],
     display: "swap", // ensures the custom font always shows.  default is 'optional'.
     variable: "--font_Mulish", // use 'var(--font_Mulish)' to use this font in CSS/SCSS
+});
+
+const font__Anybody = Anybody({
+    weight: "variable",
+    axes: ["wdth"],
+    subsets: ["latin"],
+    display: "swap", // ensures the custom font always shows.  default is 'optional'.
+    variable: "--font_Anybody", // use 'var(--font_Anybody)' to use this font in CSS/SCSS
 });
 
 export const metadata = {
@@ -52,7 +60,7 @@ export default function RootLayout({ children }) {
                     </Script>
                 </>
             ) : null}
-            <body className={`${font__Mulish.variable}`}>{children}</body>
+            <body className={`${font__Mulish.variable} ${font__Anybody.variable}`}>{children}</body>
         </html>
     );
 }
