@@ -1,5 +1,12 @@
 # 2025.jonnycolby.com
 
+## tl;dr
+
+This is a cool, generative art project and statement piece.  You can find the fun code here:
+[src/app/home/UI/Graphics_three/index.js](src/app/home/UI/Graphics_three/index.js)
+
+---
+
 This is the code for the cool, interactive, pixelated, sparkling spade on [jonnycolby.com](https://2025.jonnycolby.com).
 
 <img width="1486" alt="Screenshot 2025-03-17 at 10 47 17 PM" src="https://github.com/user-attachments/assets/67fe850b-1d49-4120-844d-334177fcd4b9" />
