@@ -23,11 +23,21 @@ class UI extends React.Component {
         };
 
         Z.state = {
-            //
+            show_decor: false,
         };
 
         //
     }
+    componentDidMount() {
+        const Z = this;
+        Z.intro(); // async branch
+    }
+
+    intro = async () => {
+        const Z = this;
+        await pause(1000 * 2.0);
+        Z.setState({ show_decor: true });
+    };
 
     orientation_activated_or_cancelled = () => {
         const Z = this;
@@ -45,7 +55,7 @@ class UI extends React.Component {
                 <div className={`${styles.renderer_3d_wrap}`}>
                     <Graphics_three parent={Z} />
                 </div>
-                <div className={`${styles.floaters}`}>
+                <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
                     <div className={`${styles.floater} ${styles.floater_bottom_left}`}>
                         <Button
                             href={`https://github.com/jonnycolby/2025.jonnycolby.com`} // providing href will convert our button into a next/link component
@@ -63,6 +73,10 @@ class UI extends React.Component {
         );
     }
 }
+
+//
+
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 //
 //

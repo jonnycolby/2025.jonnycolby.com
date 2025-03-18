@@ -56,6 +56,13 @@
     align-items: center;
     width: 0;
     height: 0;
+
+    opacity: 0;
+
+    &._visible {
+        opacity: 1;
+        transition: opacity 1.28s cubic-bezier(0.85, 0, 0.15, 1); // ease: circ: in-out
+    }
 }
 
 .floater {
