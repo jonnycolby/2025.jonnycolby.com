@@ -14,6 +14,18 @@ On page load, we take a very small image full of pixels and draw each pixel to t
 
 Then, we rotate each pixels' x and y axes.  When you do that, you get gaps between "pixels".  So we proceed to extend the pixels vertices along its plane's orientation in order to build a seamless texture when looking from the front with an orthographic camera.
 
+We then place a PointLight in the scene, placed at either the camera's position or reacting to the pointer's position.
+
+That reacts to a custom material in the space of the spade, giving the glitter effect.
+
+~~
+
+This has been optimized.
+
+Originally, I used P5.js to draw the pixels.  Then I gave the pixels orientation and 3D space.  I was recreating the 3D vertices, normals, etc. on every frame.  This was inefficient.  I switched the logic to configure to THREE.js so that I could create a 3D geometry buffer and reuse it on every frame instead of reconstructing it on every frame.
+
+Seems to work alright at this point.
+
 <br />
 
 # Setting up the project
