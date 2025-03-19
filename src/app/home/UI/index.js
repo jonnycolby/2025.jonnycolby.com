@@ -55,7 +55,7 @@ class UI extends React.Component {
                 <div className={`${styles.renderer_3d_wrap}`}>
                     <Graphics_three parent={Z} />
                 </div>
-                <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
+                {/* <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
                     <div className={`${styles.floater} ${styles.floater_bottom_left}`}>
                         <Button
                             href={`https://github.com/jonnycolby/2025.jonnycolby.com`} // providing href will convert our button into a next/link component
@@ -68,7 +68,7 @@ class UI extends React.Component {
                             <span>{`code />`}</span>
                         </Button>
                     </div>
-                </div>
+                </div> */}
             </div>
         );
     }
