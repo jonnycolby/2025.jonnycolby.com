@@ -1,6 +1,6 @@
 {
     "name": "2025.jonnycolby.com",
-    "version": "2025.3.16",
+    "version": "0.5.18",
     "private": true,
     "scripts": {
         "dev": "NODE_ENV=development npm run _dev",
