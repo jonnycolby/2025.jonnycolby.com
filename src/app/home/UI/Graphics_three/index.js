@@ -51,7 +51,7 @@ class Graphics_three extends React.Component {
                 device_inverse: new THREE.Quaternion(),
                 initial: null, // Quaternion
             },
-            light_mode: "auto", // "auto" || "cursor" || "device"
+            light_mode: "auto", // "auto" || "cursor" || "device" || "none"
         };
 
         Z.dom = {
@@ -86,6 +86,7 @@ class Graphics_three extends React.Component {
         window.addEventListener("pointerout", Z.on_pointer_out);
         window.addEventListener("resize", Z.on_resize);
         window.addEventListener("click", Z.request_device_orientation, { once: true });
+        window.addEventListener("mousedown", Z.on_mouse_down); // click and drag.  pointermove works on both mobile and desktop, but click-and-drag only works with a mouth
         //
         Z.init();
     }
@@ -257,12 +258,9 @@ class Graphics_three extends React.Component {
         if (ENABLE_ORBIT_CONTROLS) MEM.orbit_controls.update();
         //
         if (Z.vars.light_mode === "auto") {
-            var light_angle = (performance.now() * 0.001 * Math.PI * 2.0) / 3.14; // 3.14 seconds for a full rotation
-            MEM.lights.cursor.position.set(
-                Math.sin(light_angle) * Z.vars.light_distance, // TODO: switch light_distance to 2x spade size
-                Math.cos(light_angle) * Z.vars.light_distance, // TODO: switch light_distance to 2x spade size
-                Z.vars.light_distance,
-            );
+            const new_pos = auto_light_position(performance.now(), Z);
+            Z.vars.light_pos = new_pos;
+            MEM.lights.cursor.position.set(new_pos.x, new_pos.y, new_pos.z);
         } else if (Z.vars.light_mode === "device") {
             MEM.lights.cursor.position.set(
                 0, //
@@ -275,6 +273,10 @@ class Graphics_three extends React.Component {
                 Z.vars.light_pos.y * -1.0,
                 Z.vars.light_pos.z,
             );
+        } else if (Z.vars.light_mode === "none") {
+            // We let something else control the light
+        } else {
+            // We let something else control the light
         }
         //
         Z.mem.renderer.render(MEM.scene, MEM.camera);
@@ -297,27 +299,15 @@ class Graphics_three extends React.Component {
                 // MEM.objects.demo_point.material.opacity = value;
             },
         });
-        await animate({
-            from: 0.0,
-            to: 1.0,
-            duration: 2.0,
-            ease: "power2.inOut",
-            on_update: (value) => {
-                MEM.objects.demo_point.material.opacity = value;
-            },
-        });
-        //
-        // const start_value = MEM.lights.cursor.intensity;
-        // const end_value = 1.0;
-        // var anim = { progress: 0.0 };
-        // GSAP.to(anim, {
-        //     progress: 1.0, duration: 2.4, ease: "power2.inOut", onUpdate: () => {
-        //         MEM.lights.cursor.intensity =
-        //     } });
-        //     //
-        // await pause(1000 * 2.4); // wait for cursor light to animate
-        // GSAP.to(MEM.objects.demo_point.material, { opacity: 1.0, duration: 1.0, ease: "power2.inOut" });
-        //
+        // await animate({
+        //     from: 0.0,
+        //     to: 1.0,
+        //     duration: 2.0,
+        //     ease: "power2.inOut",
+        //     on_update: (value) => {
+        //         MEM.objects.demo_point.material.opacity = value;
+        //     },
+        // });
     };
 
     //
@@ -384,6 +374,7 @@ class Graphics_three extends React.Component {
 
     request_device_orientation = () => {
         const Z = this;
+        const MEM = Z.mem;
         if (typeof DeviceOrientationEvent.requestPermission === "function") {
             // iOS 13+ and other browsers that require permission
             DeviceOrientationEvent.requestPermission()
@@ -392,6 +383,7 @@ class Graphics_three extends React.Component {
                         window.addEventListener("deviceorientation", Z.on_device_orientation);
                         // +
                         Z.vars.light_mode = "device";
+                        MEM.objects.demo_point.material.opacity = 1.0;
                         // TODO:  set initial quaternion
                         //
                     } else {
@@ -447,6 +439,76 @@ class Graphics_three extends React.Component {
         MEM.objects.scene_group.quaternion.copy(relativeQuaternion);
     };
 
+    on_mouse_down = (e) => {
+        const Z = this;
+        const MEM = Z.mem;
+        Z.vars.light_mode = "none";
+        MEM.objects.demo_point.material.opacity = 1.0;
+        window.addEventListener("mousemove", Z.on_mouse_drag);
+        window.addEventListener("mouseup", Z.on_mouse_up, { once: true });
+    };
+
+    on_mouse_drag = (e) => {
+        const Z = this;
+        const MEM = Z.mem;
+        console.log("drag");
+        // Drag to rotate the object instead of the light
+        // const dx = e.movementX;
+        // const dy = e.movementY;
+        // // const rotation_speed = 0.01;
+        // const rotation_x = dy * rotation_speed;
+        // const rotation_y = dx * rotation_speed;
+        // // ->
+        // Z.mem.objects.scene_group.rotateX(rotation_x);
+        // Z.mem.objects.scene_group.rotateY(rotation_y);
+        //
+        // Trigonometry: Calculate the angle based on cursor position
+        const x = e.clientX - window.innerWidth * 0.5;
+        const y = e.clientY - window.innerHeight * 0.5;
+        const r = Math.max(window.innerWidth, window.innerHeight) * LIGHT_DISTANCE_RATIO;
+        // Drag to rotate the object instead of the light.  Rotate the object to face the cursor
+        const angle_x = Math.atan(y / r);
+        const angle_y = Math.atan(x / r);
+        // ->
+        MEM.objects.scene_group.rotation.set(angle_x, angle_y, 0);
+    };
+
+    on_mouse_up = async (e) => {
+        const Z = this;
+        const MEM = Z.mem;
+        window.removeEventListener("mousemove", Z.on_mouse_drag);
+        Z.vars.light_mode = "none"; // control the light ourselves for a moment
+        //
+        const duration_sec = 0.48;
+        // Reset the object's rotation with animate()
+        animate({
+            from: { x: MEM.objects.scene_group.rotation.x, y: MEM.objects.scene_group.rotation.y, z: MEM.objects.scene_group.rotation.z },
+            to: { x: 0, y: 0, z: 0 },
+            duration: duration_sec,
+            ease: "power2.inOut",
+            on_update: (rotation) => {
+                MEM.objects.scene_group.rotation.set(rotation.x, rotation.y, rotation.z);
+            },
+        });
+        // Rotate the light back to the auto position
+        const new_light_pos = auto_light_position(performance.now() + duration_sec * 1000, Z);
+        await animate({
+            // from: { x: Z.vars.light_pos.x, y: Z.vars.light_pos.y, z: Z.vars.light_pos.z },
+            // from: the current light position
+            from: { x: MEM.lights.cursor.position.x, y: MEM.lights.cursor.position.y, z: MEM.lights.cursor.position.z },
+            // to: { x: 0, y: 0, z: Z.vars.light_distance }, // straight forward
+            to: { x: new_light_pos.x, y: new_light_pos.y, z: new_light_pos.z }, // to: the projected "auto" position
+            duration: duration_sec,
+            ease: "power2.inOut",
+            on_update: (light_pos) => {
+                Z.vars.light_pos = light_pos;
+                MEM.lights.cursor.position.set(Z.vars.light_pos.x, Z.vars.light_pos.y, Z.vars.light_pos.z);
+            },
+        });
+        Z.vars.light_mode = "auto";
+        MEM.objects.demo_point.material.opacity = 0.0;
+    };
+
     //
     //
 
@@ -462,6 +524,19 @@ class Graphics_three extends React.Component {
 
 const deg_to_rad = (deg) => {
     return (deg * Math.PI) / 180;
+};
+
+//
+
+const auto_light_position = (time, Z) => {
+    time = time || performance.now();
+    var light_angle = (time * 0.001 * Math.PI * 2.0) / 3.14; // 3.14 seconds for a full rotation
+    const out = {
+        x: Math.sin(light_angle) * Z.vars.light_distance, // TODO: switch light_distance to 2x spade size
+        y: Math.cos(light_angle) * Z.vars.light_distance, // TODO: switch light_distance to 2x spade size
+        z: Z.vars.light_distance,
+    };
+    return out;
 };
 
 //
@@ -626,16 +701,44 @@ const make_spade_geometry = (px_values) => {
 
 const animate = ({ from, to, duration, ease, on_update }) => {
     return new Promise((resolve) => {
-        const anim = { progress: 0.0, value: from };
+        // const anim = { progress: 0.0, value: from };
+        // GSAP.to(anim, {
+        //     progress: 1.0,
+        //     duration: duration,
+        //     ease: ease,
+        //     onUpdate: () => {
+        //         // object[property_name] = anim.progress * to;
+        //         // if (on_update && typeof on_update === "function") on_update(anim.progress);
+        //         anim.value = map({ from, to, progress: anim.progress });
+        //         on_update(anim.value);
+        //     },
+        //     onComplete: resolve,
+        // });
+        //
+        // Optionally, animate an object like { x: 0, y: 0, z: 0 }
+        const anim = { progress: 0.0 };
         GSAP.to(anim, {
             progress: 1.0,
             duration: duration,
             ease: ease,
             onUpdate: () => {
-                // object[property_name] = anim.progress * to;
-                // if (on_update && typeof on_update === "function") on_update(anim.progress);
-                anim.value = map({ from, to, progress: anim.progress });
-                on_update(anim.value);
+                // const value = {};
+                // for (var key in from) {
+                //     value[key] = map({ from: from[key], to: to[key], progress: anim.progress });
+                // }
+                //
+                // Check if the value is a number or an object
+                let value = {};
+                if (typeof from === "number") {
+                    value = map({ from: from, to: to, progress: anim.progress });
+                } else {
+                    for (var key in from) {
+                        value[key] = map({ from: from[key], to: to[key], progress: anim.progress });
+                    }
+                }
+                console.log("value", value);
+                //
+                on_update(value);
             },
             onComplete: resolve,
         });
