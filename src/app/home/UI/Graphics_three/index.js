@@ -16,11 +16,11 @@ const IS_DEV = process.env.NODE_ENV === "development";
 //
 
 // MARK: constants
-var PX_SIZE = 2; // length of one square
+let PX_SIZE = 2; // length of one square
 const ROTATE_MAX_ANGLE = Math.PI * 0.25 * 0.5 * 0.1875 * 1.5; // 45 degrees / ...
 const LIGHT_DISTANCE_RATIO = 0.5;
 const LIGHT_Z_RATIO = 0.75; // squish the z-axis
-var SHAPE_THICKNESS_px = PX_SIZE * 2;
+let SHAPE_THICKNESS_px = PX_SIZE * 2;
 
 const ENABLE_ORBIT_CONTROLS = false;
 
@@ -54,6 +54,7 @@ class Graphics_three extends React.Component {
             },
             light_mode: "auto", // "auto" || "cursor" || "device" || "none"
             device_orientation_active: false,
+            drag_offset: null, // -> { x: 0, y: 0 }
         };
 
         Z.dom = {
@@ -88,7 +89,7 @@ class Graphics_three extends React.Component {
         window.addEventListener("pointerout", Z.on_pointer_out);
         window.addEventListener("resize", Z.on_resize);
         window.addEventListener("click", Z.request_device_orientation, { once: true });
-        window.addEventListener("pointerdown", Z.on_pointer_down); // click and drag.  pointermove works on both mobile and desktop, but click-and-drag only works with a mouth
+        window.addEventListener("pointerdown", Z.on_mouse_down); // click and drag (mouse only).  pointermove works on both mobile and desktop, but click-and-drag only works with a mouse
         //
         Z.init();
     }
@@ -469,36 +470,61 @@ class Graphics_three extends React.Component {
         MEM.objects.scene_group.quaternion.copy(relativeQuaternion);
     };
 
-    on_pointer_down = (e) => {
+    on_mouse_down = (e) => {
         const Z = this;
         const MEM = Z.mem;
-        // if (e.touches && e.touches.length) return;
-        if (e.pointerType == "touch") return;
-        Z.vars.light_mode = "none";
+        if (e.pointerType == "touch") return; // mouse (and pen) events only
+
+        Z.vars.drag_offset = { x: 0, y: 0 };
+
         MEM.objects.demo_point.material.opacity = 1.0;
         window.addEventListener("mousemove", Z.on_mouse_drag);
         window.addEventListener("mouseup", Z.on_mouse_up, { once: true });
         Z.hide_hint(); // async
+
+        // MARK: animate light to the front
+        Z.vars.light_mode = "none";
+        animate({
+            from: { x: MEM.lights.cursor.position.x, y: MEM.lights.cursor.position.y, z: MEM.lights.cursor.position.z }, // from: current light position
+            to: { x: 0, y: 0, z: Z.vars.light_distance }, // straight forward
+            duration: 0.48,
+            ease: "power2.inOut",
+            on_update: (light_pos) => {
+                Z.vars.light_pos = light_pos;
+                MEM.lights.cursor.position.set(Z.vars.light_pos.x, Z.vars.light_pos.y, Z.vars.light_pos.z);
+            },
+        }).then(() => {
+            Z.vars.light_mode = "device";
+        });
     };
 
     on_mouse_drag = (e) => {
         const Z = this;
         const MEM = Z.mem;
-        console.log("drag");
         // Drag to rotate the object instead of the light
-        const x = e.clientX - window.innerWidth * 0.5;
-        const y = e.clientY - window.innerHeight * 0.5;
+
+        // MARK: point the object toward the cursor
+        // const x = e.clientX - window.innerWidth * 0.5;
+        // const y = e.clientY - window.innerHeight * 0.5;
+
+        // MARK: drag from anywhere to rotate object by delta values
+        Z.vars.drag_offset.x += e.movementX;
+        Z.vars.drag_offset.y += e.movementY;
+        const x = Z.vars.drag_offset.x;
+        const y = Z.vars.drag_offset.y;
+
         const r = Math.max(window.innerWidth, window.innerHeight) * LIGHT_DISTANCE_RATIO;
-        // Drag to rotate the object instead of the light.  Rotate the object to face the cursor
+
         const angle_x = Math.atan(y / r);
         const angle_y = Math.atan(x / r);
-        // ->
+
         MEM.objects.scene_group.rotation.set(angle_x, angle_y, 0);
     };
 
     on_mouse_up = async (e) => {
         const Z = this;
         const MEM = Z.mem;
+        Z.vars.drag_offset = null;
         window.removeEventListener("mousemove", Z.on_mouse_drag);
         Z.vars.light_mode = "none"; // control the light ourselves for a moment
         //
@@ -516,9 +542,7 @@ class Graphics_three extends React.Component {
         // Rotate the light back to the auto position
         const new_light_pos = auto_light_position(performance.now() + duration_sec * 1000, Z);
         await animate({
-            // from: { x: Z.vars.light_pos.x, y: Z.vars.light_pos.y, z: Z.vars.light_pos.z },
-            // from: the current light position
-            from: { x: MEM.lights.cursor.position.x, y: MEM.lights.cursor.position.y, z: MEM.lights.cursor.position.z },
+            from: { x: MEM.lights.cursor.position.x, y: MEM.lights.cursor.position.y, z: MEM.lights.cursor.position.z }, // from: current light position
             // to: { x: 0, y: 0, z: Z.vars.light_distance }, // straight forward
             to: { x: new_light_pos.x, y: new_light_pos.y, z: new_light_pos.z }, // to: the projected "auto" position
             duration: duration_sec,
