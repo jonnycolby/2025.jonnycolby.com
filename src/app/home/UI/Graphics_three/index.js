@@ -4,8 +4,10 @@ import React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "stats.js";
+import GSAP from "gsap";
 //
 import get_spade_pixels from "@/methods/get_pixels/spade";
+import pause from "@/methods/pause";
 //
 import styles from "./styles.module.scss";
 //
@@ -68,7 +70,7 @@ class Graphics_three extends React.Component {
                 directional_light_01: null,
             },
             objects: {
-                cube_01: null,
+                demo_point: null,
             },
         };
 
@@ -91,6 +93,12 @@ class Graphics_three extends React.Component {
         window.removeEventListener("pointermove", Z.on_pointer_move);
         window.removeEventListener("resize", Z.on_resize);
         window.removeEventListener("deviceorientation", Z.on_device_orientation, true);
+    }
+    componentDidUpdate(prev_props) {
+        const Z = this;
+        if (Z.props.visible && !prev_props.visible) {
+            Z.intro(); // async
+        }
     }
 
     //
@@ -144,9 +152,10 @@ class Graphics_three extends React.Component {
         // OPTIONAL: Orientation point
         //  -> A sense of gravity.  This helps the user feel the direction of the spade's normal.  Without this, the spade can feel like its rotating the opposite way.
         //  -> TODO: let's show this when we have a device orientation, and hide it when we're in light position mode
-        const demo_point = {};
+        MEM.objects.demo_point = {};
+        const demo_point = MEM.objects.demo_point;
         demo_point.group = new THREE.Group();
-        demo_point.material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        demo_point.material = new THREE.MeshBasicMaterial({ color: 0xffffff, opacity: 0.0, transparent: true }); // opacity becomes 1.0 during intro
         demo_point.geometries = {};
         demo_point.geometries.x_axis = new THREE.CylinderGeometry(1, 1, 24, 8); // radiusTop, radiusBottom, height, radialSegments
         demo_point.geometries.y_axis = demo_point.geometries.x_axis.clone();
@@ -211,13 +220,10 @@ class Graphics_three extends React.Component {
         // MARK: Lights
         //
 
-        MEM.lights.ambient = new THREE.AmbientLight(0x080809, 1.0); // soft white light
-        MEM.scene.add(MEM.lights.ambient);
-
         // create a point light:
         MEM.lights.cursor = new THREE.PointLight(
             0xf3f2f3, // color
-            1.0, // intensity
+            0.0, // -> 1.0, // intensity
             0, // distance
             0.01, // decay -> should be 2 with a normal PerspectiveCamera for physically-accurate results // TODO: refine this value
         );
@@ -266,6 +272,18 @@ class Graphics_three extends React.Component {
         //
         Z.mem.renderer.render(MEM.scene, MEM.camera);
         if (Z.mem.stats) Z.mem.stats.end();
+    };
+
+    //
+
+    intro = async () => {
+        const Z = this;
+        const MEM = Z.mem;
+        //
+        GSAP.to(MEM.lights.cursor, { intensity: 1.0, duration: 2.4, ease: "power2.inOut" });
+        await pause(1000 * 2.4); // wait for cursor light to animate
+        GSAP.to(MEM.objects.demo_point.material, { opacity: 1.0, duration: 1.0, ease: "power2.inOut" });
+        //
     };
 
     //

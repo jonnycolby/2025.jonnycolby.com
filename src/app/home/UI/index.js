@@ -5,8 +5,10 @@ import Link from "next/link";
 //
 import Graphics_p5 from "./Graphics_p5";
 import Graphics_three from "./Graphics_three";
-//
+import Intro from "./Intro";
 import Button from "@/components/Button";
+//
+import pause from "@/methods/pause";
 //
 import styles from "./styles.module.scss";
 //
@@ -23,6 +25,10 @@ class UI extends React.Component {
         };
 
         Z.state = {
+            intro_exists: false,
+            intro_active: false,
+            show_3d: false,
+            show_2d: false,
             show_decor: false,
         };
 
@@ -32,11 +38,26 @@ class UI extends React.Component {
         const Z = this;
         Z.intro(); // async branch
     }
+    set_state = (new_state) => new Promise((resolve) => this.setState(new_state, resolve));
 
     intro = async () => {
         const Z = this;
+        await pause(1000 * 0.5);
+        await Z.set_state({ intro_exists: true });
+        // await pause(1000 * 0.1);
+        await Z.set_state({ intro_active: true });
+        // -> continues in intro_complete()
+    };
+
+    intro_complete = async () => {
+        const Z = this;
+        //
+        await Z.set_state({ intro_exists: false, show_3d: true });
+        await pause(1000 * 1.0);
+        await Z.set_state({ show_2d: true });
+        //
         await pause(1000 * 2.0);
-        Z.setState({ show_decor: true });
+        Z.setState({ show_decor: true }); // TODO: use this for "info" button
     };
 
     orientation_activated_or_cancelled = () => {
@@ -49,11 +70,16 @@ class UI extends React.Component {
 
         return (
             <div className={`${styles.UI}`}>
+                {Z.state.intro_exists ? (
+                    <div className={`${styles.intro_wrap}`}>
+                        <Intro active={Z.state.intro_active} on_complete={Z.intro_complete} />
+                    </div>
+                ) : null}
                 <div className={`${styles.renderer_2d_wrap}`}>
-                    <Graphics_p5 parent={Z} />
+                    <Graphics_p5 parent={Z} visible={Z.state.show_2d} />
                 </div>
                 <div className={`${styles.renderer_3d_wrap}`}>
-                    <Graphics_three parent={Z} />
+                    <Graphics_three parent={Z} visible={Z.state.show_3d} />
                 </div>
                 {/* <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
                     <div className={`${styles.floater} ${styles.floater_bottom_left}`}>
@@ -73,10 +99,6 @@ class UI extends React.Component {
         );
     }
 }
-
-//
-
-const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 //
 //

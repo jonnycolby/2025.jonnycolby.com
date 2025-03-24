@@ -2,6 +2,7 @@ import React from "react";
 import Stats from "stats.js";
 //
 import get_corner_pixels from "@/methods/get_pixels/corner";
+import pause from "@/methods/pause";
 //
 import styles from "./styles.module.scss";
 //
@@ -28,6 +29,7 @@ class Graphics extends React.Component {
 
         Z.vars = {
             loaded: false,
+            opacity: 0.0,
         };
 
         Z.mem = {
@@ -128,6 +130,12 @@ class Graphics extends React.Component {
     componentWillUnmount() {
         const Z = this;
     }
+    componentDidUpdate(prev_props) {
+        const Z = this;
+        if (Z.props.visible && !prev_props.visible) {
+            Z.intro();
+        }
+    }
 
     init = async () => {
         const Z = this;
@@ -146,6 +154,11 @@ class Graphics extends React.Component {
             Z.mem.instance.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
             Z.dom.stats.appendChild(Z.mem.instance.stats.dom);
         }
+    };
+
+    intro = async () => {
+        const Z = this;
+        // Z.mem.instance.p5.noLoop();
     };
 
     SKETCH = (p5) => {
