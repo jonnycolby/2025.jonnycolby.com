@@ -85,20 +85,20 @@ class Graphics_three extends React.Component {
         if (Z.vars._mounted) return true;
         Z.vars._mounted = true;
         //
-        window.addEventListener("pointermove", Z.on_pointer_move);
-        window.addEventListener("pointerout", Z.on_pointer_out);
+        Z.dom.Renderer.addEventListener("pointermove", Z.on_pointer_move);
+        Z.dom.Renderer.addEventListener("pointerout", Z.on_pointer_out);
         window.addEventListener("resize", Z.on_resize);
-        window.addEventListener("touchstart", Z.request_device_orientation, { once: true }); // TOUCH only
-        window.addEventListener("pointerdown", Z.on_mouse_down); // mouse-only (we return immediately if type is touch)
-        window.addEventListener("pointerdown", Z.on_pointer_down); // all pointer types, mouse or touch
+        Z.dom.Renderer.addEventListener("click", Z.request_device_orientation, { once: true });
+        Z.dom.Renderer.addEventListener("pointerdown", Z.on_mouse_down); // mouse-only (we return immediately if type is touch)
+        Z.dom.Renderer.addEventListener("pointerdown", Z.on_pointer_down); // all pointer types, mouse or touch
         //
         Z.init();
     }
     componentWillUnmount() {
         const Z = this;
-        window.removeEventListener("pointermove", Z.on_pointer_move);
-        window.removeEventListener("resize", Z.on_resize);
-        window.removeEventListener("deviceorientation", Z.on_device_orientation, true);
+        Z.dom.Renderer.removeEventListener("pointermove", Z.on_pointer_move);
+        Z.dom.Renderer.removeEventListener("resize", Z.on_resize);
+        Z.dom.Renderer.removeEventListener("deviceorientation", Z.on_device_orientation, true);
     }
     componentDidUpdate(prev_props) {
         const Z = this;
@@ -135,7 +135,6 @@ class Graphics_three extends React.Component {
         //
 
         const spade_px_values = await get_spade_pixels();
-        // ->
         const spade_geometry = make_spade_geometry(spade_px_values);
 
         //
@@ -402,7 +401,6 @@ class Graphics_three extends React.Component {
     };
 
     request_device_orientation = (e) => {
-        // called on touchstart, NOT mouse events
         const Z = this;
         const MEM = Z.mem;
         if (Z.vars.device_orientation_active) return; // only request once
@@ -426,8 +424,7 @@ class Graphics_three extends React.Component {
                 })
                 .catch(console.error);
         } else {
-            // Older browsers that don't require permission
-            window.addEventListener("deviceorientation", Z.on_device_orientation);
+            // Skip if device orientation is not available
         }
         // ->
         // Either way:

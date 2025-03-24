@@ -8,7 +8,7 @@ import styles from "./styles.module.scss";
 //
 
 const STATIC = {
-    button_background_offset_max_px: 12,
+    button_background_offset_max_px: 8,
 };
 
 class Button extends React.Component {
@@ -34,11 +34,12 @@ class Button extends React.Component {
     }
     componentDidMount() {
         const Z = this;
-        Z.dom.button.addEventListener("pointerenter", Z.on_pointerenter);
+        Z.dom.button.addEventListener("pointerenter", Z.on_pointer_enter);
     }
 
-    on_pointerenter = (e) => {
+    on_pointer_enter = (e) => {
         const Z = this;
+        if (Z.props.on_pointer_enter) Z.props.on_pointer_enter(e);
         //
         Z.cache.bbox = Z.dom.button.getBoundingClientRect();
         Z.cache.center = {
@@ -49,20 +50,21 @@ class Button extends React.Component {
         //
         Z.setState({ lit: true });
         //
-        window.addEventListener("pointermove", Z.on_pointermove);
-        Z.dom.button.addEventListener("pointerleave", Z.on_pointerleave, { once: true });
+        window.addEventListener("pointermove", Z.on_pointer_move);
+        Z.dom.button.addEventListener("pointerleave", Z.on_pointer_leave, { once: true });
     };
 
-    on_pointerleave = (e) => {
+    on_pointer_leave = (e) => {
         const Z = this;
-        window.removeEventListener("pointermove", Z.on_pointermove);
+        if (Z.props.on_pointer_leave) Z.props.on_pointer_leave(e);
+        window.removeEventListener("pointermove", Z.on_pointer_move);
         Z.setState({ lit: false });
         Z.dom.background.style.transform = "";
         Z.dom.content.style.transform = "";
-        console.log("pointer leave");
+        console.log("pointer out");
     };
 
-    on_pointermove = (e) => {
+    on_pointer_move = (e) => {
         const Z = this;
         //
         const offset = {
@@ -91,7 +93,7 @@ class Button extends React.Component {
             <>
                 <div className={`${styles.button_background}`} ref={(el) => (Z.dom.background = el)}></div>
                 <div className={`${styles.button_content} ${Z.props.className || ""}`} ref={(el) => (Z.dom.content = el)}>
-                    {...Z.props.children}
+                    {Z.props.children}
                 </div>
             </>
         );

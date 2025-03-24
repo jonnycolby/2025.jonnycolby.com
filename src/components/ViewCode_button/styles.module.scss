@@ -4,7 +4,58 @@
 .ViewCode_button {
     @include font-fancy;
     font-weight: 567;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    // letter-spacing: 0.03em;
+    // text-transform: uppercase;
     white-space: pre;
+
+    &._hover {
+        .expandable {
+            width: auto;
+        }
+    }
+}
+
+.content {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+}
+
+.always_visible_text {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+}
+
+.expandable {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: 0px;
+    height: 100%;
+    overflow: hidden;
+
+    transition:
+        opacity 0.32s ease-in-out,
+        width 0.32s cubic-bezier(0.65, 0, 0.35, 1); // ease-in-out-cubic
+}
+
+.expandable_text {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: 100%;
+}
+
+.smaller_text {
+    font-size: 0.84em;
 }
