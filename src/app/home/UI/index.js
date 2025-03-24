@@ -1,11 +1,11 @@
 "use client";
 //
 import React from "react";
-import Link from "next/link";
 //
 import Graphics_p5 from "./Graphics_p5";
 import Graphics_three from "./Graphics_three";
 import Button from "@/components/Button";
+import ViewCode_button from "@/components/ViewCode_button";
 //
 import pause from "@/methods/pause";
 //
@@ -63,20 +63,11 @@ class UI extends React.Component {
                 <div className={`${styles.renderer_3d_wrap}`}>
                     <Graphics_three parent={Z} visible={Z.state.show_3d} />
                 </div>
-                {/* <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
+                <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
                     <div className={`${styles.floater} ${styles.floater_bottom_left}`}>
-                        <Button
-                            href={`https://github.com/jonnycolby/2025.jonnycolby.com`} // providing href will convert our button into a next/link component
-                            target={`_blank`}
-                            className={`${styles.button} ${styles.view_code_button}`}
-                        >
-                            <span>{`<`}</span>
-                            <span className={`${styles.desktop_only}`}>{` source_`}</span>
-                            <span className={`${styles.mobile_only}`}>{` `}</span>
-                            <span>{`code />`}</span>
-                        </Button>
+                        <ViewCode_button />
                     </div>
-                </div> */}
+                </div>
             </div>
         );
     }

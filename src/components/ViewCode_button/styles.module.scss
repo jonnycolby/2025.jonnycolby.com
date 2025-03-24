@@ -1,0 +1,10 @@
+@use "@/styles/common" as *;
+//
+
+.ViewCode_button {
+    @include font-fancy;
+    font-weight: 567;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: pre;
+}
