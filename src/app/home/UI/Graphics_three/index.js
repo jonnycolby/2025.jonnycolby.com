@@ -20,7 +20,7 @@ var PX_SIZE = 2; // length of one square
 const ROTATE_MAX_ANGLE = Math.PI * 0.25 * 0.5 * 0.1875 * 1.5; // 45 degrees / ...
 const LIGHT_DISTANCE_RATIO = 0.5;
 const LIGHT_Z_RATIO = 0.75; // squish the z-axis
-const SHAPE_THICKNESS_px = PX_SIZE * 2;
+var SHAPE_THICKNESS_px = PX_SIZE * 2;
 
 const ENABLE_ORBIT_CONTROLS = false;
 
@@ -128,6 +128,7 @@ class Graphics_three extends React.Component {
         if (window.innerWidth < 512) PX_SIZE = 2;
         else if (window.innerWidth < 1440) PX_SIZE = 3;
         else PX_SIZE = 4;
+        SHAPE_THICKNESS_px = PX_SIZE * 2;
 
         //
 
@@ -168,7 +169,6 @@ class Graphics_three extends React.Component {
         //
         // OPTIONAL: Orientation point
         //  -> A sense of gravity.  This helps the user feel the direction of the spade's normal.  Without this, the spade can feel like its rotating the opposite way.
-        //  -> TODO: let's show this when we have a device orientation, and hide it when we're in light position mode
         MEM.objects.demo_point = {};
         const demo_point = MEM.objects.demo_point;
         demo_point.group = new THREE.Group();

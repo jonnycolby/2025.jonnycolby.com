@@ -3,6 +3,7 @@ import Stats from "stats.js";
 //
 import get_corner_pixels from "@/methods/get_pixels/corner";
 import pause from "@/methods/pause";
+import animate from "@/methods/animate";
 //
 import styles from "./styles.module.scss";
 //
@@ -28,7 +29,6 @@ class Graphics extends React.Component {
         };
 
         Z.vars = {
-            loaded: false,
             opacity: 0.0,
         };
 
@@ -82,30 +82,6 @@ class Graphics extends React.Component {
             },
         };
 
-        Z.doc = {
-            graphics: {
-                gui: null,
-                gui_3d: null,
-                scaled: null,
-                textured: null,
-                composite: null,
-                texture_paper: null,
-                paper_grain: null,
-            },
-            buffer: {
-                pixels: null,
-            },
-            shader: {
-                composite: null,
-            },
-            px_font: null,
-            image: {
-                paper_dust: null,
-                paper_concrete: null,
-                paper_grain: null,
-            },
-        };
-
         Z.lib = {
             p5: null,
         };
@@ -115,8 +91,6 @@ class Graphics extends React.Component {
             canvas_wrap: null,
             stats: null,
         };
-
-        //
     }
 
     componentDidMount() {
@@ -137,15 +111,12 @@ class Graphics extends React.Component {
     init = async () => {
         const Z = this;
         Z.measure();
-        //
         Z.lib.p5 = require("p5");
-        //
 
         Z.mem.px.corner = await get_corner_pixels();
 
-        //
         Z.mem.instance.p5 = new Z.lib.p5(Z.SKETCH, Z.dom.canvas_wrap);
-        //
+
         if (Z.static.enable_stats) {
             Z.mem.instance.stats = new Stats();
             Z.mem.instance.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -155,13 +126,21 @@ class Graphics extends React.Component {
 
     intro = async () => {
         const Z = this;
-        // Z.mem.instance.p5.noLoop();
+        await pause(1000 / 15); // wait for at least a frame
+        await animate({
+            from: 0.0,
+            to: 1.0,
+            duration: 0.72,
+            ease: "power2.inOut",
+            on_update: (value) => {
+                Z.vars.opacity = value;
+                Z.mem.instance.p5.redraw();
+            },
+        });
     };
 
     SKETCH = (p5) => {
         const Z = this;
-
-        var px_size; // + ...
 
         p5.preload = async () => {
             // ...
@@ -200,7 +179,7 @@ class Graphics extends React.Component {
 
             // MARK: top-left corner mark
             p5.push();
-            p5.fill(243, 242, 243);
+            p5.fill(243, 242, 243, 255 * Z.vars.opacity);
             p5.noStroke();
             p5.translate(corner_offset.x * px_size, corner_offset.y * px_size);
             for (var row_i = 0; row_i < Z.mem.px.corner.length; row_i++) {
@@ -216,7 +195,7 @@ class Graphics extends React.Component {
 
             // MARK: bottom-right corner mark
             p5.push();
-            p5.fill(243, 242, 243);
+            p5.fill(243, 242, 243, 255 * Z.vars.opacity);
             p5.noStroke();
             p5.translate(p5.width - corner_offset.x * px_size, p5.height - corner_offset.y * px_size);
             p5.rotate(Math.PI * 1.0);
@@ -245,8 +224,6 @@ class Graphics extends React.Component {
 
     orientation_activated_or_cancelled = () => {
         const Z = this;
-        Z.mem.tap_hint.opacity = 0.0;
-        // Z.on_frame();
     };
 
     render() {
@@ -262,9 +239,6 @@ class Graphics extends React.Component {
         );
     }
 }
-
-//
-//
 
 //
 //

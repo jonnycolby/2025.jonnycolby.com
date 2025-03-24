@@ -39,9 +39,9 @@ class UI extends React.Component {
 
     intro = async () => {
         const Z = this;
-        await Z.set_state({ show_3d: true });
-        await pause(1000 * 1.0);
         await Z.set_state({ show_2d: true });
+        await pause(1000 * 2.0);
+        await Z.set_state({ show_3d: true });
         //
         await pause(1000 * 2.0);
         Z.setState({ show_decor: true }); // TODO: use this for "info" button
