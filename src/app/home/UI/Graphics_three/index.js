@@ -88,7 +88,7 @@ class Graphics_three extends React.Component {
         window.addEventListener("pointerout", Z.on_pointer_out);
         window.addEventListener("resize", Z.on_resize);
         window.addEventListener("click", Z.request_device_orientation, { once: true });
-        window.addEventListener("mousedown", Z.on_mouse_down); // click and drag.  pointermove works on both mobile and desktop, but click-and-drag only works with a mouth
+        window.addEventListener("pointerdown", Z.on_pointer_down); // click and drag.  pointermove works on both mobile and desktop, but click-and-drag only works with a mouth
         //
         Z.init();
     }
@@ -423,6 +423,9 @@ class Graphics_three extends React.Component {
         const MEM = Z.mem;
         const VARS = Z.vars;
         //
+
+        Z.vars.light_mode = "device";
+
         //  IMPORTANT: We use Quaternion instead of Euler angles to avoid gimbal lock
         //   -> https://en.wikipedia.org/wiki/Gimbal_lock
 
@@ -456,10 +459,11 @@ class Graphics_three extends React.Component {
         MEM.objects.scene_group.quaternion.copy(relativeQuaternion);
     };
 
-    on_mouse_down = (e) => {
+    on_pointer_down = (e) => {
         const Z = this;
         const MEM = Z.mem;
-        if (e.touches && e.touches.length) return;
+        // if (e.touches && e.touches.length) return;
+        if (e.pointerType == "touch") return;
         Z.vars.light_mode = "none";
         MEM.objects.demo_point.material.opacity = 1.0;
         window.addEventListener("mousemove", Z.on_mouse_drag);
