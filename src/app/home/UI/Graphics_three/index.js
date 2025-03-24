@@ -459,6 +459,7 @@ class Graphics_three extends React.Component {
     on_mouse_down = (e) => {
         const Z = this;
         const MEM = Z.mem;
+        if (e.touches && e.touches.length) return;
         Z.vars.light_mode = "none";
         MEM.objects.demo_point.material.opacity = 1.0;
         window.addEventListener("mousemove", Z.on_mouse_drag);
