@@ -53,6 +53,7 @@ class Graphics_three extends React.Component {
                 initial: null, // Quaternion
             },
             light_mode: "auto", // "auto" || "cursor" || "device" || "none"
+            device_orientation_active: false,
         };
 
         Z.dom = {
@@ -388,6 +389,9 @@ class Graphics_three extends React.Component {
     request_device_orientation = () => {
         const Z = this;
         const MEM = Z.mem;
+        if (Z.vars.device_orientation_active) return; // only request once
+        Z.vars.device_orientation_active = true;
+        //
         if (typeof DeviceOrientationEvent.requestPermission === "function") {
             // iOS 13+ and other browsers that require permission
             DeviceOrientationEvent.requestPermission()
