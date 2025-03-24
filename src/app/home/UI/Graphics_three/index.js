@@ -88,7 +88,7 @@ class Graphics_three extends React.Component {
         window.addEventListener("pointermove", Z.on_pointer_move);
         window.addEventListener("pointerout", Z.on_pointer_out);
         window.addEventListener("resize", Z.on_resize);
-        window.addEventListener("click", Z.request_device_orientation, { once: true });
+        window.addEventListener("touchstart", Z.request_device_orientation, { once: true }); // TOUCH only
         window.addEventListener("pointerdown", Z.on_mouse_down); // mouse-only (we return immediately if type is touch)
         window.addEventListener("pointerdown", Z.on_pointer_down); // all pointer types, mouse or touch
         //
@@ -308,7 +308,6 @@ class Graphics_three extends React.Component {
             ease: "power2.inOut",
             on_update: (value) => {
                 MEM.lights.cursor.intensity = value;
-                // MEM.objects.demo_point.material.opacity = value;
             },
         });
         // If we want to animate the "demo_point" in at the beginning, we can use this.  Instead, currently, we are flipping it on when the object rotates and off when it's not rotating
@@ -404,7 +403,8 @@ class Graphics_three extends React.Component {
         }
     };
 
-    request_device_orientation = () => {
+    request_device_orientation = (e) => {
+        // called on touchstart, NOT mouse events
         const Z = this;
         const MEM = Z.mem;
         if (Z.vars.device_orientation_active) return; // only request once
@@ -525,6 +525,7 @@ class Graphics_three extends React.Component {
         const angle_y = Math.atan(x / r);
 
         MEM.objects.scene_group.rotation.set(angle_x, angle_y, 0);
+        console.log("rotation", MEM.objects.scene_group.rotation);
     };
 
     on_mouse_up = async (e) => {
@@ -542,11 +543,13 @@ class Graphics_three extends React.Component {
             duration: duration_sec,
             ease: "power2.inOut",
             on_update: (rotation) => {
+                // console.log("reset rotation", rotation);
                 MEM.objects.scene_group.rotation.set(rotation.x, rotation.y, rotation.z);
+                console.log("reset rotation", MEM.objects.scene_group.rotation);
             },
         });
         // Rotate the light back to the auto position
-        const new_light_pos = auto_light_position(performance.now() + duration_sec * 1000, Z);
+        const new_light_pos = auto_light_position(performance.now() + duration_sec * 1000, Z); // project the "auto" position at the time of the end of the animation
         await animate({
             from: { x: MEM.lights.cursor.position.x, y: MEM.lights.cursor.position.y, z: MEM.lights.cursor.position.z }, // from: current light position
             // to: { x: 0, y: 0, z: Z.vars.light_distance }, // straight forward
