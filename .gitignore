@@ -8,7 +8,7 @@
 !.npmrc.template
 
 /config/ssl/certs/*
-!/config/ssl/certs/_Notes
+!/config/ssl/certs/README.md
 !/config/ssl/certs/_localhost.conf
 !/config/ssl/certs/_localhost.ext
 
