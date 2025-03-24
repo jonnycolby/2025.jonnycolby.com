@@ -311,15 +311,15 @@ class Graphics_three extends React.Component {
             },
         });
         // If we want to animate the "demo_point" in at the beginning, we can use this.  Instead, currently, we are flipping it on when the object rotates and off when it's not rotating
-        // await animate({
-        //     from: 0.0,
-        //     to: 1.0,
-        //     duration: 2.0,
-        //     ease: "power2.inOut",
-        //     on_update: (value) => {
-        //         MEM.objects.demo_point.material.opacity = value;
-        //     },
-        // });
+        /* await animate({
+            from: 0.0,
+            to: 1.0,
+            duration: 2.0,
+            ease: "power2.inOut",
+            on_update: (value) => {
+                MEM.objects.demo_point.material.opacity = value;
+            },
+        }); */
         //
         await Z.set_state({ hint_visible: true }); // animates with CSS
         setTimeout(() => {
@@ -346,11 +346,11 @@ class Graphics_three extends React.Component {
         Z.mem.camera.top = window.innerHeight * 0.5;
         Z.mem.camera.bottom = window.innerHeight * -0.5;
         Z.mem.camera.updateProjectionMatrix();
-        //
+
         Z.vars.dom_bbox = Z.dom.Renderer.getBoundingClientRect();
         const dom_bbox = Z.vars.dom_bbox;
         // Z.vars.light_distance = Math.max(dom_bbox.width, dom_bbox.height) * LIGHT_DISTANCE_RATIO; // TODO: fix light_distance functionality
-        //
+
         const x = Z.vars.light_pos.x;
         const y = Z.vars.light_pos.y;
         const r = Math.max(dom_bbox.width, dom_bbox.height) * LIGHT_DISTANCE_RATIO;
@@ -374,9 +374,7 @@ class Graphics_three extends React.Component {
 
     on_pointer_move = (e) => {
         const Z = this;
-        //
         if (Z.vars.light_mode == "auto") Z.vars.light_mode = "cursor";
-        //
         Z.vars.cursor_pos = { x: e.clientX - window.innerWidth * 0.5, y: e.clientY - window.innerHeight * 0.5 };
         // ->
         // Equation of a sphere:
@@ -409,7 +407,7 @@ class Graphics_three extends React.Component {
         const MEM = Z.mem;
         if (Z.vars.device_orientation_active) return; // only request once
         Z.vars.device_orientation_active = true;
-        //
+
         if (typeof DeviceOrientationEvent.requestPermission === "function") {
             // iOS 13+ and other browsers that require permission
             DeviceOrientationEvent.requestPermission()
@@ -509,11 +507,11 @@ class Graphics_three extends React.Component {
         const MEM = Z.mem;
         // Drag to rotate the object instead of the light
 
-        // MARK: point the object toward the cursor
+        // MARK: point the object toward the cursor (option 1)
         // const x = e.clientX - window.innerWidth * 0.5;
         // const y = e.clientY - window.innerHeight * 0.5;
 
-        // MARK: drag from anywhere to rotate object by delta values
+        // MARK: drag from anywhere to rotate object by delta values (option 1)
         Z.vars.drag_offset.x += e.movementX;
         Z.vars.drag_offset.y += e.movementY;
         const x = Z.vars.drag_offset.x;
@@ -525,7 +523,6 @@ class Graphics_three extends React.Component {
         const angle_y = Math.atan(x / r);
 
         MEM.objects.scene_group.rotation.set(angle_x, angle_y, 0);
-        console.log("rotation", MEM.objects.scene_group.rotation);
     };
 
     on_mouse_up = async (e) => {
@@ -543,9 +540,7 @@ class Graphics_three extends React.Component {
             duration: duration_sec,
             ease: "power2.inOut",
             on_update: (rotation) => {
-                // console.log("reset rotation", rotation);
                 MEM.objects.scene_group.rotation.set(rotation.x, rotation.y, rotation.z);
-                console.log("reset rotation", MEM.objects.scene_group.rotation);
             },
         });
         // Rotate the light back to the auto position
