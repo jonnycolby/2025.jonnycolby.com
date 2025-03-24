@@ -89,7 +89,8 @@ class Graphics_three extends React.Component {
         window.addEventListener("pointerout", Z.on_pointer_out);
         window.addEventListener("resize", Z.on_resize);
         window.addEventListener("click", Z.request_device_orientation, { once: true });
-        window.addEventListener("pointerdown", Z.on_mouse_down); // click and drag (mouse only).  pointermove works on both mobile and desktop, but click-and-drag only works with a mouse
+        window.addEventListener("pointerdown", Z.on_mouse_down); // mouse-only (we return immediately if type is touch)
+        window.addEventListener("pointerdown", Z.on_pointer_down); // all pointer types, mouse or touch
         //
         Z.init();
     }
@@ -361,6 +362,12 @@ class Graphics_three extends React.Component {
         };
     };
 
+    // on_pointer_down() is for mouse or touch.  on_mouse_down() is for mouse only
+    on_pointer_down = (e) => {
+        const Z = this;
+        Z.hide_hint(); // async
+    };
+
     on_pointer_out = (e) => {
         const Z = this;
         if (Z.vars.light_mode == "cursor") Z.vars.light_mode = "auto";
@@ -480,7 +487,6 @@ class Graphics_three extends React.Component {
         MEM.objects.demo_point.material.opacity = 1.0;
         window.addEventListener("mousemove", Z.on_mouse_drag);
         window.addEventListener("mouseup", Z.on_mouse_up, { once: true });
-        Z.hide_hint(); // async
 
         // MARK: animate light to the front
         Z.vars.light_mode = "none";
