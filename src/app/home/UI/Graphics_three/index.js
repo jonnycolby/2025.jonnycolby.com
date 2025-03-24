@@ -453,16 +453,6 @@ class Graphics_three extends React.Component {
         const MEM = Z.mem;
         console.log("drag");
         // Drag to rotate the object instead of the light
-        // const dx = e.movementX;
-        // const dy = e.movementY;
-        // // const rotation_speed = 0.01;
-        // const rotation_x = dy * rotation_speed;
-        // const rotation_y = dx * rotation_speed;
-        // // ->
-        // Z.mem.objects.scene_group.rotateX(rotation_x);
-        // Z.mem.objects.scene_group.rotateY(rotation_y);
-        //
-        // Trigonometry: Calculate the angle based on cursor position
         const x = e.clientX - window.innerWidth * 0.5;
         const y = e.clientY - window.innerHeight * 0.5;
         const r = Math.max(window.innerWidth, window.innerHeight) * LIGHT_DISTANCE_RATIO;
