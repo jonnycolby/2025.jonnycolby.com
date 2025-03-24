@@ -35,7 +35,8 @@ class Graphics_three extends React.Component {
         Z.parent.children.Graphics_three = Z;
 
         Z.state = {
-            // ...
+            hint_text: "", // "drag or move the cursor" -> desktop/mouse  || "tap or drag" -> mobile/touch
+            hint_visible: false,
         };
 
         Z.vars = {
@@ -107,12 +108,20 @@ class Graphics_three extends React.Component {
             intro_if_ready();
         }
     }
+    set_state = (new_state) => new Promise((resolve) => this.setState(new_state, resolve));
 
     //
 
     init = async () => {
         const Z = this;
         const MEM = Z.mem;
+
+        let hint_text = "";
+        if (typeof DeviceOrientationEvent.requestPermission === "function") hint_text = "tap or drag";
+        else hint_text = "drag or move the cursor";
+        await Z.set_state({ hint_text: hint_text });
+
+        //
 
         PX_SIZE = 2; // default
         if (window.innerWidth < 512) PX_SIZE = 2;
@@ -299,6 +308,7 @@ class Graphics_three extends React.Component {
                 // MEM.objects.demo_point.material.opacity = value;
             },
         });
+        // If we want to animate the "demo_point" in at the beginning, we can use this.  Instead, currently, we are flipping it on when the object rotates and off when it's not rotating
         // await animate({
         //     from: 0.0,
         //     to: 1.0,
@@ -308,6 +318,9 @@ class Graphics_three extends React.Component {
         //         MEM.objects.demo_point.material.opacity = value;
         //     },
         // });
+        //
+        await Z.set_state({ hint_visible: true }); // animates with CSS
+        setTimeout(async () => await Z.set_state({ hint_visible: false }), 1000 * 3.6); // animates with CSS
     };
 
     //
@@ -505,7 +518,11 @@ class Graphics_three extends React.Component {
     render() {
         const Z = this;
 
-        return <div className={`${styles.Graphics_three}`} ref={(el) => (Z.dom.Renderer = el)}></div>;
+        return (
+            <div className={`${styles.Graphics_three}`} ref={(el) => (Z.dom.Renderer = el)}>
+                <div className={`${styles.hint_text} ${Z.state.hint_visible ? styles._visible : ""}`}>{Z.state.hint_text}</div>
+            </div>
+        );
     }
 }
 

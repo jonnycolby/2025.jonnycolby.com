@@ -136,6 +136,7 @@ class Graphics extends React.Component {
             Z.intro();
         }
     }
+    set_state = (new_state) => new Promise((resolve) => this.setState(new_state, resolve));
 
     init = async () => {
         const Z = this;
