@@ -4,10 +4,10 @@ import React from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import Stats from "stats.js";
-import GSAP from "gsap";
 //
 import get_spade_pixels from "@/methods/get_pixels/spade";
 import pause from "@/methods/pause";
+import animate from "@/methods/animate";
 //
 import styles from "./styles.module.scss";
 //
@@ -321,7 +321,17 @@ class Graphics_three extends React.Component {
         // });
         //
         await Z.set_state({ hint_visible: true }); // animates with CSS
-        setTimeout(async () => await Z.set_state({ hint_visible: false }), 1000 * 3.6); // animates with CSS
+        setTimeout(() => {
+            Z.hide_hint(); // async
+        }, 1000 * 7.2);
+    };
+
+    // NOTE: we call hide_hint() after a timer in intro() OR on pointerdown, whichever comes first
+    hide_hint = async () => {
+        const Z = this;
+        if (!Z.state.hint_visible) return; // already hidden
+        await Z.set_state({ hint_visible: false }); // animates with CSS
+        return true;
     };
 
     //
@@ -468,6 +478,7 @@ class Graphics_three extends React.Component {
         MEM.objects.demo_point.material.opacity = 1.0;
         window.addEventListener("mousemove", Z.on_mouse_drag);
         window.addEventListener("mouseup", Z.on_mouse_up, { once: true });
+        Z.hide_hint(); // async
     };
 
     on_mouse_drag = (e) => {
@@ -710,60 +721,6 @@ const make_spade_geometry = (px_values) => {
 
     // ->
     return spade_geometry;
-};
-
-//
-//
-
-const animate = ({ from, to, duration, ease, on_update }) => {
-    return new Promise((resolve) => {
-        // const anim = { progress: 0.0, value: from };
-        // GSAP.to(anim, {
-        //     progress: 1.0,
-        //     duration: duration,
-        //     ease: ease,
-        //     onUpdate: () => {
-        //         // object[property_name] = anim.progress * to;
-        //         // if (on_update && typeof on_update === "function") on_update(anim.progress);
-        //         anim.value = map({ from, to, progress: anim.progress });
-        //         on_update(anim.value);
-        //     },
-        //     onComplete: resolve,
-        // });
-        //
-        // Optionally, animate an object like { x: 0, y: 0, z: 0 }
-        const anim = { progress: 0.0 };
-        GSAP.to(anim, {
-            progress: 1.0,
-            duration: duration,
-            ease: ease,
-            onUpdate: () => {
-                // const value = {};
-                // for (var key in from) {
-                //     value[key] = map({ from: from[key], to: to[key], progress: anim.progress });
-                // }
-                //
-                // Check if the value is a number or an object
-                let value = {};
-                if (typeof from === "number") {
-                    value = map({ from: from, to: to, progress: anim.progress });
-                } else {
-                    for (var key in from) {
-                        value[key] = map({ from: from[key], to: to[key], progress: anim.progress });
-                    }
-                }
-                console.log("value", value);
-                //
-                on_update(value);
-            },
-            onComplete: resolve,
-        });
-    });
-};
-
-const map = ({ from, to, progress }) => {
-    // return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
-    return from + (to - from) * progress;
 };
 
 //
