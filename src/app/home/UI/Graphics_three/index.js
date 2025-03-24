@@ -40,6 +40,7 @@ class Graphics_three extends React.Component {
 
         Z.vars = {
             _mounted: false,
+            _ready: false,
             cursor_pos: { x: 0, y: 0 },
             light_distance: 200,
             light_pos: { x: 0, y: 0, z: 0 },
@@ -97,7 +98,12 @@ class Graphics_three extends React.Component {
     componentDidUpdate(prev_props) {
         const Z = this;
         if (Z.props.visible && !prev_props.visible) {
-            Z.intro(); // async
+            const intro_if_ready = () => {
+                if (Z.vars._ready)
+                    Z.intro(); // async
+                else setTimeout(intro_if_ready, 1000 * 0.1);
+            };
+            intro_if_ready();
         }
     }
 
@@ -239,6 +245,7 @@ class Graphics_three extends React.Component {
             document.body.appendChild(Z.mem.stats.dom);
         }
         MEM.renderer.setAnimationLoop(Z.animate);
+        Z.vars._ready = true;
         return true;
     };
 
@@ -280,9 +287,36 @@ class Graphics_three extends React.Component {
         const Z = this;
         const MEM = Z.mem;
         //
-        GSAP.to(MEM.lights.cursor, { intensity: 1.0, duration: 2.4, ease: "power2.inOut" });
-        await pause(1000 * 2.4); // wait for cursor light to animate
-        GSAP.to(MEM.objects.demo_point.material, { opacity: 1.0, duration: 1.0, ease: "power2.inOut" });
+        await animate({
+            from: 0.0,
+            to: 1.0,
+            duration: 3.6,
+            ease: "power2.inOut",
+            on_update: (value) => {
+                MEM.lights.cursor.intensity = value;
+                // MEM.objects.demo_point.material.opacity = value;
+            },
+        });
+        await animate({
+            from: 0.0,
+            to: 1.0,
+            duration: 2.0,
+            ease: "power2.inOut",
+            on_update: (value) => {
+                MEM.objects.demo_point.material.opacity = value;
+            },
+        });
+        //
+        // const start_value = MEM.lights.cursor.intensity;
+        // const end_value = 1.0;
+        // var anim = { progress: 0.0 };
+        // GSAP.to(anim, {
+        //     progress: 1.0, duration: 2.4, ease: "power2.inOut", onUpdate: () => {
+        //         MEM.lights.cursor.intensity =
+        //     } });
+        //     //
+        // await pause(1000 * 2.4); // wait for cursor light to animate
+        // GSAP.to(MEM.objects.demo_point.material, { opacity: 1.0, duration: 1.0, ease: "power2.inOut" });
         //
     };
 
@@ -290,6 +324,14 @@ class Graphics_three extends React.Component {
 
     on_resize = () => {
         const Z = this;
+        // MARK: Resize orthographic camera
+        Z.mem.renderer.setSize(window.innerWidth, window.innerHeight);
+        Z.mem.camera.left = window.innerWidth * -0.5;
+        Z.mem.camera.right = window.innerWidth * 0.5;
+        Z.mem.camera.top = window.innerHeight * 0.5;
+        Z.mem.camera.bottom = window.innerHeight * -0.5;
+        Z.mem.camera.updateProjectionMatrix();
+        //
         Z.vars.dom_bbox = Z.dom.Renderer.getBoundingClientRect();
         const dom_bbox = Z.vars.dom_bbox;
         // Z.vars.light_distance = Math.max(dom_bbox.width, dom_bbox.height) * LIGHT_DISTANCE_RATIO; // TODO: fix light_distance functionality
@@ -577,6 +619,32 @@ const make_spade_geometry = (px_values) => {
 
     // ->
     return spade_geometry;
+};
+
+//
+//
+
+const animate = ({ from, to, duration, ease, on_update }) => {
+    return new Promise((resolve) => {
+        const anim = { progress: 0.0, value: from };
+        GSAP.to(anim, {
+            progress: 1.0,
+            duration: duration,
+            ease: ease,
+            onUpdate: () => {
+                // object[property_name] = anim.progress * to;
+                // if (on_update && typeof on_update === "function") on_update(anim.progress);
+                anim.value = map({ from, to, progress: anim.progress });
+                on_update(anim.value);
+            },
+            onComplete: resolve,
+        });
+    });
+};
+
+const map = ({ from, to, progress }) => {
+    // return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    return from + (to - from) * progress;
 };
 
 //

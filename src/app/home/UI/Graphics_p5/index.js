@@ -178,7 +178,8 @@ class Graphics extends React.Component {
         };
 
         p5.windowResized = () => {
-            // ...
+            Z.measure();
+            p5.resizeCanvas(Z.cache.graphics.bbox.width, Z.cache.graphics.bbox.height);
         };
 
         p5.draw = () => {

@@ -5,7 +5,6 @@ import Link from "next/link";
 //
 import Graphics_p5 from "./Graphics_p5";
 import Graphics_three from "./Graphics_three";
-import Intro from "./Intro";
 import Button from "@/components/Button";
 //
 import pause from "@/methods/pause";
@@ -25,8 +24,6 @@ class UI extends React.Component {
         };
 
         Z.state = {
-            intro_exists: false,
-            intro_active: false,
             show_3d: false,
             show_2d: false,
             show_decor: false,
@@ -42,17 +39,7 @@ class UI extends React.Component {
 
     intro = async () => {
         const Z = this;
-        await pause(1000 * 0.5);
-        await Z.set_state({ intro_exists: true });
-        // await pause(1000 * 0.1);
-        await Z.set_state({ intro_active: true });
-        // -> continues in intro_complete()
-    };
-
-    intro_complete = async () => {
-        const Z = this;
-        //
-        await Z.set_state({ intro_exists: false, show_3d: true });
+        await Z.set_state({ show_3d: true });
         await pause(1000 * 1.0);
         await Z.set_state({ show_2d: true });
         //
@@ -70,11 +57,6 @@ class UI extends React.Component {
 
         return (
             <div className={`${styles.UI}`}>
-                {Z.state.intro_exists ? (
-                    <div className={`${styles.intro_wrap}`}>
-                        <Intro active={Z.state.intro_active} on_complete={Z.intro_complete} />
-                    </div>
-                ) : null}
                 <div className={`${styles.renderer_2d_wrap}`}>
                     <Graphics_p5 parent={Z} visible={Z.state.show_2d} />
                 </div>
