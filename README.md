@@ -116,7 +116,9 @@ On mobile devices with touch and motion, users can tap the screen to activate **
 
 We solve this using a [Quaternion](https://en.wikipedia.org/wiki/Quaternion) instead of [Euler angles](https://en.wikipedia.org/wiki/Euler_angles).
 
-![spade-rotation-quaternion-02b-trimmed - 12fps, HD](https://github.com/user-attachments/assets/a344bd4a-fcc6-4544-9042-bf90e4e8f4b0)
+<p align="center">
+    <img height="840" alt="spade-rotation-quaternion-02b-trimmed - 12fps, HD" src="https://github.com/user-attachments/assets/a344bd4a-fcc6-4544-9042-bf90e4e8f4b0" />
+</p>
 
 <br />
 <br />
