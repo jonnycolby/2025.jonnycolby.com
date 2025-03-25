@@ -76,6 +76,8 @@ Each time the page loads, we import the pixel array from each image and calculat
 Using trigonometry, we rotate the vertices of each square along the x and y axes about the square's center. When you do that, you get gaps between "pixels". So we calculate new vertex positions, extending the pixel's vertices along its
 plane's orientation in order to build a seamless texture in 2D.
 
+<br />
+
 <p align="center">
     <img height="840" alt="Screenshot 2025-03-17 at 10 44 14 PM" src="https://github.com/user-attachments/assets/2f9c1086-e7a7-4230-a913-3180b8a70c53" />
 </p>
