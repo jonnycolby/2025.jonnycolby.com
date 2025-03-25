@@ -117,6 +117,17 @@ With Three.js, we only calculate the vertices once, and then we save them to a *
 
 <br />
 <br />
+
+## This is all done in React.
+
+Want cool react components?
+
+I'm available for hire.
+
+[hello@jonnycolby.com](mailto:hello@jonnycolby.com)
+
+<br />
+<br />
 <br />
 <br />
 <br />
