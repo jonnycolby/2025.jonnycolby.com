@@ -10,9 +10,9 @@
 This is generative art made with **React**, **Three.js**, **P5.js**, a little bit of **GSAP**, and **custom code**. It's built on **JavaScript**, **WebGL**, and `<canvas />`. It can be used on just about any modern device with a browser, no
 matter the OS.
 
-Each "pixel" in this interactive composition is generated on the fly. You'll never see the same scene twice.
+Each pixel reacts differently to the light, generating a "glitter" effect.
 
-We generate glitter, cover pixel art in it, and suspend it in space.
+The pixels in the inerative composition are generated on the fly. You'll never see the same object twice.
 
 <br />
 <br />
