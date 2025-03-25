@@ -45,6 +45,8 @@ Next, you'll need to create SSL certificates for local development.
 
 Follow the instructions here: [config/ssl/certs/README.md](config/ssl/certs/README.md)
 
+<br />
+
 ## Run the project
 
 ```
