@@ -106,6 +106,12 @@ What if we suspend the spade in real space and rotate according to the device's 
 
 On mobile devices with touch and motion, users can tap the screen to activate **orientation mode**.
 
+![spade-rotation-euler-01b-trimmed - 12fps, HD](https://github.com/user-attachments/assets/c01cca0b-86c1-43c9-a6b6-a9f189e4023b)
+
+## Oh no! Gimbal lock!
+
+
+
 <br />
 <br />
 
