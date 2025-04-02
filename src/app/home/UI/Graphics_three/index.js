@@ -151,8 +151,8 @@ class Graphics_three extends React.Component {
         MEM.camera.position.z = 1000;
 
         MEM.renderer = new THREE.WebGLRenderer({ alpha: true });
-        MEM.renderer.setPixelRatio(window.devicePixelRatio);
-        // MEM.renderer.setPixelRatio(1.0);
+        MEM.renderer.setPixelRatio(Math.max(window.devicePixelRatio, 2.0)); // must render at at least 2.0 pixel ratio to fix rendering issues that occur at 1.0
+        // MEM.renderer.setPixelRatio(1.0); // causes rendering issue with small spaces between "pixels" when object rotates -> this issue is specific to this Spade renderer
         // MEM.renderer.setClearColor(0x000000, 0);
         MEM.renderer.setSize(dom_bbox.width, dom_bbox.height);
         Z.dom.Renderer.appendChild(MEM.renderer.domElement);
