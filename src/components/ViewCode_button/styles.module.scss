@@ -3,7 +3,8 @@
 
 .ViewCode_button {
     @include font-fancy;
-    font-weight: 567;
+    font-size: 18px;
+    font-weight: 789;
     // letter-spacing: 0.03em;
     // text-transform: uppercase;
     white-space: pre;
@@ -52,6 +53,8 @@
     align-items: center;
     width: auto;
     height: 100%;
+
+    font-weight: 678;
 }
 
 .smaller_text {

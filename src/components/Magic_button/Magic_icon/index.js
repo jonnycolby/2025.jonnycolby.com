@@ -21,7 +21,7 @@ class Magic_icon extends React.Component {
         Z.noise = create_perlin_noise(42); // generate a new 2D noise instance with optional seed
 
         Z.static = {
-            line_count: 12,
+            line_count: 18,
             // symmetrical: true,
         };
 
@@ -97,7 +97,7 @@ class Magic_icon extends React.Component {
             IMG.push();
             IMG.noFill();
             IMG.stroke(...COLOR, 255);
-            IMG.strokeWeight(2.0); // TODO: adapt to the size of the image
+            IMG.strokeWeight(1.0); // TODO: adapt to the size of the image
             IMG.rotateZ(Math.PI * 2.0 * (_now * 0.1));
             for (let i = 0; i < Z.static.line_count; i++) {
                 IMG.push();

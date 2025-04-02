@@ -14,6 +14,10 @@ class ViewCode_button extends React.Component {
         super(props);
         const Z = this;
 
+        Z.static = {
+            big_button: true,
+        };
+
         Z.state = {
             hover: false,
             expandable_width: 0, // current width
@@ -53,15 +57,16 @@ class ViewCode_button extends React.Component {
         return (
             <Button
                 is_icon={true}
+                big={Z.static.big_button}
                 href={`https://jonnycolby.computer`} // providing href will convert our button into a next/link component
                 target={`_blank`}
                 className={`${styles.ViewCode_button} ${Z.state.hover ? styles._hover : ""}`}
                 on_pointer_enter={Z.on_pointer_enter} // hover
                 on_pointer_leave={Z.on_pointer_leave} // opposite of hover
             >
-                <div className={`${styles.content}`}>
-                    <Magic_icon />
-                </div>
+                {/* <div className={`${styles.content}`}> */}
+                <Magic_icon big={Z.static.big_button} />
+                {/* </div> */}
             </Button>
         );
     }

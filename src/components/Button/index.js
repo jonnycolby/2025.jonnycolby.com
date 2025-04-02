@@ -89,6 +89,8 @@ class Button extends React.Component {
 
         // const attributes = {};
 
+        const className = `${styles.Button} ${Z.props.is_icon ? styles.icon_button : ""} ${Z.props.big ? styles._big : ""}`;
+
         const inside_elements = (
             <>
                 <div className={`${styles.button_background}`} ref={(el) => (Z.dom.background = el)}></div>
@@ -101,7 +103,7 @@ class Button extends React.Component {
         if (Z.props.href) {
             return (
                 <Link
-                    className={`${styles.Button} ${Z.props.is_icon ? styles.icon_button : ""}`}
+                    className={className}
                     ref={(el) => (Z.dom.button = el)} // get a reference to the DOM element
                     href={Z.props.href || undefined}
                     target={Z.props.target || undefined}
@@ -112,7 +114,7 @@ class Button extends React.Component {
         } else {
             return (
                 <button
-                    className={`${styles.Button}`}
+                    className={className}
                     ref={(el) => (Z.dom.button = el)} // get a reference to the DOM element
                 >
                     {inside_elements}

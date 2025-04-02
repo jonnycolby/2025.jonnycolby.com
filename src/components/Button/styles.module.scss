@@ -23,6 +23,23 @@
 
     &.icon_button {
         padding: 0;
+        width: 44px;
+
+        .button_content {
+            width: 100%;
+        }
+    }
+
+    &._big {
+        height: 64px;
+        padding: 0 32px;
+        font-size: 1.2em;
+
+        &.icon_button {
+            height: 64px;
+            width: 64px;
+            padding: 0;
+        }
     }
 }
 
@@ -42,6 +59,10 @@
     transition:
         opacity 0.32s ease-in-out,
         transform 0.24s ease-in-out;
+}
+
+.Button._big .button_background {
+    border-radius: 16px;
 }
 
 .button_content {
