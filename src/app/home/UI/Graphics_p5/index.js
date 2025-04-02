@@ -29,6 +29,7 @@ class Graphics extends React.Component {
         };
 
         Z.vars = {
+            _ready: false,
             opacity: 0.0,
         };
 
@@ -134,7 +135,7 @@ class Graphics extends React.Component {
             ease: "power2.inOut",
             on_update: (value) => {
                 Z.vars.opacity = value;
-                Z.mem.instance.p5.redraw();
+                if (Z.vars._ready) Z.mem.instance.p5.redraw();
             },
         });
     };
@@ -152,6 +153,7 @@ class Graphics extends React.Component {
             // p5.pixelDensity(1);
             // p5.frameRate(60);
             p5.noLoop();
+            Z.vars._ready = true;
         };
 
         p5.windowResized = () => {

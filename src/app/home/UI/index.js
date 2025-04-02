@@ -6,6 +6,7 @@ import Graphics_p5 from "./Graphics_p5";
 import Graphics_three from "./Graphics_three";
 import Button from "@/components/Button";
 import ViewCode_button from "@/components/ViewCode_button";
+import Magic_button from "@/components/Magic_button";
 //
 import pause from "@/methods/pause";
 //
@@ -64,6 +65,9 @@ class UI extends React.Component {
                     <Graphics_three parent={Z} visible={Z.state.show_3d} />
                 </div>
                 <div className={`${styles.floaters} ${Z.state.show_decor ? styles._visible : ""}`}>
+                    <div className={`${styles.floater} ${styles.floater_top_right}`}>
+                        <Magic_button />
+                    </div>
                     <div className={`${styles.floater} ${styles.floater_bottom_left}`}>
                         <ViewCode_button />
                     </div>

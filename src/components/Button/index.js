@@ -101,7 +101,7 @@ class Button extends React.Component {
         if (Z.props.href) {
             return (
                 <Link
-                    className={`${styles.Button}`}
+                    className={`${styles.Button} ${Z.props.is_icon ? styles.icon_button : ""}`}
                     ref={(el) => (Z.dom.button = el)} // get a reference to the DOM element
                     href={Z.props.href || undefined}
                     target={Z.props.target || undefined}

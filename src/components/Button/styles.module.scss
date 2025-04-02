@@ -20,6 +20,10 @@
 
     font: inherit;
     color: inherit;
+
+    &.icon_button {
+        padding: 0;
+    }
 }
 
 .button_background {
